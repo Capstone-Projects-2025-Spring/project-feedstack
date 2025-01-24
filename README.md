@@ -16,7 +16,9 @@ Section #, as well as any words that quickly give your peers insights into the a
 
 ## Project Abstract
 
-This document proposes a novel application of a text message (SMS or Email) read-out and hands-free call interacted between an Android Smartphone and an infotainment platform (headunit) in a car environment. When a phone receives an SMS or Email, the text message is transferred from the phone to the headunit through a Bluetooth connection. On the headunit, user can control which and when the received SMS or E-mail to be read out through the in-vehicle audio system. The user may press one button on the headunit to activate the hands-free feature to call back the SMS sender.
+Feedstack is a multimodal AI-powered feedback system designed to provide tailored insights on user interface (UI) and user experience (UX) designs. Built using Django, React, Python, and OpenAI's API, the platform allows designers to upload web and app designs, receive AI-generated feedback, and refine their work through an interactive chatbot interface.
+
+The system enables participants to log in with an ID and upload a web design image. The uploaded design is displayed on the left, while an AI-driven chatbot on the right provides context-aware feedback based on UX principles, design heuristics, and accessibility guidelines. Feedback is structured into interactive accordions, with each accordion categorized under a predefined design theme (e.g., Accessibility, Visual Hierarchy, Color Contrast, Consistency, Responsive Design, Usability, and Aesthetic Appeal).
 
 ## High Level Requirement
 
