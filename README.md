@@ -42,10 +42,37 @@ Discuss what you need to develop this project. This includes background informat
 <table>
 <tr>
     <td align="center">
-        <a href="https://github.com/ApplebaumIan">
-            <img src="https://avatars.githubusercontent.com/u/9451941?v=4" width="100;" alt="ApplebaumIan"/>
+        <a href="https://github.com/omarshakir8">
+            <img src="https://avatars.githubusercontent.com/u/71716775?v=4" width="100;" alt="Omar"/>
             <br />
-            <sub><b>Ian Tyler Applebaum</b></sub>
+            <sub><b>Omar Shakir</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JonCherryy">
+            <img src="https://avatars.githubusercontent.com/u/153747009?v=4" width="100;" alt="Jonothan Cherry"/>
+            <br />
+            <sub><b>Jonothan Cherry</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JPLahoda">
+            <img src="https://avatars.githubusercontent.com/u/93489427?v=4" width="100;" alt="Jason"/>
+            <br />
+            <sub><b>Jason Lahoda</b></sub>
+        </a>
+    </td><td align="center">
+        <a href="https://github.com/Jack-Wylie13">
+            <img src="https://avatars.githubusercontent.com/u/156946045?v=4" width="100;" alt="Jack Lyle"/>
+            <br />
+            <sub><b>Jack Wylie</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JRheeTU">
+            <img src="https://avatars.githubusercontent.com/u/143642672?v=4" width="100;" alt="leighflagg"/>
+            <br />
+            <sub><b>Joshua Rhee</b></sub>
         </a>
     </td>
     <td align="center">
@@ -54,7 +81,8 @@ Discuss what you need to develop this project. This includes background informat
             <br />
             <sub><b>Null</b></sub>
         </a>
-    </td></tr>
+    </td>
+    </tr>
 </table>
 
 [//]: # ( readme: collaborators -end )
