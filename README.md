@@ -406,10 +406,10 @@ Launch the application using Gunicorn as the production server:
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/leighflagg">
-            <img src="https://avatars.githubusercontent.com/u/77810293?v=4" width="100;" alt="leighflagg"/>
+        <a href="https://github.com/Random76520">
+            <img src="https://avatars.githubusercontent.com/u/123013478?v=4" width="100;" alt="Augustin"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Jonathan Augustin</b></sub>
         </a>
     </td>
     </tr>
