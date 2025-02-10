@@ -4,18 +4,20 @@ sidebar_position: 3
 
 # General Requirements
 
-* Users must be able to upload design files in PNG, JPG, and PDF formats.
+* All members of this project must have sufficient experience with GitHub.
 
-* AI-generated feedback should be categorized into predefined design themes.
+* Visual Studio Code is highly recommended as well.
 
-* Users should be able to navigate feedback efficiently using bookmarks.
+* The development environment will consist of both Node.js and Python packages.
 
-* The system should provide interactive chat-based feedback with contextual follow-up questions.
+* The front-end portion will require React (Node.js), whereas the back-end portion will require Django (Python).
 
-* The accordion system must summarize feedback themes with definitions, relations, and key terms.
+* AI will utilize GPT-4 specifically.
 
-* Secure authentication should be provided via Google Sign-In.
+* Different user scenarios must be anticipated in a realistic manner.
 
-* The platform must ensure high availability and responsiveness.
+* The system will accept design files in PNG, JPG, and PDF formats.
 
-* System should be accessible via web browsers on both desktop and mobile devices.
+* Users will navigate feedback efficiently using bookmarks.
+
+* The system will provide interactive chat-based feedback with contextual follow-up questions.
