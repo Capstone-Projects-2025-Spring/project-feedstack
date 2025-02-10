@@ -2,6 +2,14 @@
 sidebar_position: 5
 ---
 
+# User Personas
+
+## User Persona 1
+![feedstack3.png](..%2Fimg%2Ffeedstack3.png)
+
+## User Persona 2
+![feedstack2.png](..%2Fimg%2Ffeedstack2.png)
+
 # Use-case descriptions
 
 ## Use Case 1: Creating an Account
@@ -89,11 +97,3 @@ sidebar_position: 5
 - :white_check_mark: Given that I have not bookmarked anything
 - :arrow_right: When I visit the bookmarks section
 - :bulb: Then the system should suggest key themes based on my history
-
-# User Personas
-
-## User Persona 1
-![feedstack3.png](..%2Fimg%2Ffeedstack3.png)
-
-## User Persona 2
-![feedstack2.png](..%2Fimg%2Ffeedstack2.png)
