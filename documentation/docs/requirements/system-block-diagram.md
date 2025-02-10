@@ -5,9 +5,13 @@ sidebar_position: 2
 # System Block Diagram
 
 ![SystemDesign](https://github.com/user-attachments/assets/3a744e34-2de4-457b-a338-1575c9ef13fd)
+
 high-level overview of **Feedstack’s system architecture**, ensuring smooth integration between the **frontend, backend, AI services, and real-time collaboration tools**:
 
 ## 🏗️ System Components
+
+## 🔧 Modular & Scalable Architecture
+The system is **modularly designed**, making it **easy to maintain and expand** as we introduce **new features**.
 
 ### 🚀 Frontend (React)
 - Handles all **user interactions**, from **design uploads** to managing **feedback and collaboration sessions**.
@@ -25,10 +29,7 @@ high-level overview of **Feedstack’s system architecture**, ensuring smooth in
 - Stores **user data, chat history**, and supports **real-time synchronization** for collaboration.
 
 ### ☁️ Deployment
-- **Grok, Vercel, and Netlify** are used to host different parts of the application.
+- **Grok** is used to host different parts of the application.
 - Ensures **fast performance, scalability, and seamless updates**.
-
-## 🔧 Modular & Scalable Architecture
-The system is **modularly designed**, making it **easy to maintain and expand** as we introduce **new features**.
 
 ---
