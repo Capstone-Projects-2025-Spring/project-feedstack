@@ -5,14 +5,13 @@ sidebar_position: 4
 # Functional Requirements
 
 ## 1. AI Feedback Generation
-- System shall analyze designs using OpenAI GPT-4 Vision API.
-- Feedback shall be categorized into predefined design themes.
+- System must be able to analyze designs using OpenAI GPT-4 Vision API.
+- Feedback must be categorized into predefined design themes.
 - The chatbot shall provide interactive explanations and follow-up suggestions.
 
 ## 2. Design Upload & Processing
-- Users can upload PNG, JPG, or PDF files.
-- System shall validate file format and size.
-- Uploaded files shall be processed for AI analysis.
+- Users must be able to upload the most common image formats: PNG, JPG, & PDF.
+- System must be able to validate varying file format and size (size limited to 2 gigs).
 
 ## 3. Theme-Based Accordion Feedback
 - Feedback shall be structured under collapsible theme-based accordions.
@@ -26,27 +25,27 @@ sidebar_position: 4
 - Clicking a bookmark shall anchor the user to the relevant accordion section.
 - System shall allow quick switching between related themes.
 
-  ## 5. User Authentication
-- System shall support secure login via Google Sign-In.
-- User sessions shall be maintained securely.
+## 5. User Authentication
+- System must support secure login via Google Sign-In.
+- User sessions must be maintained securely.
 
 # Non-Functional Requirements
 
 ## 1. Performance
-- AI feedback must be generated within **30 seconds**.
-- Chat response time must be under **15 seconds**.
-- The system should support **concurrent users efficiently**.
+- Initial Image Design Feedback must be generated within **30 seconds**.
+- Separate user chat's response time must be under **15 seconds**.
+- The system should be able to meet the two benchmarks above with **at least 20 people**.
 
 ## 2. Security
-- API keys must be **securely stored and managed**.
+- API keys must be **securely stored and managed**, unable to be seen by the user via the site.
 - All user data must be **encrypted in transit**.
 - Session management should **prevent unauthorized access**.
 
 ## 3. Usability
-- The UI must be **intuitive and mobile-responsive**.
-- Design feedback must be presented in a **structured and accessible manner**.
-- Color contrast and typography must meet **accessibility standards**.
+- The **mobile-view** should have the same navigation options as desktop view.
+- User must be able to **navigate** to desired pages within 20 seconds.
+- Design feedback must be readable and eyecatching, having the most important parts **highlighted, accented, or bolded**.
+- Color contrast and typography must meet **WCAG accessibility guidelines**.
 
 ## 4. Scalability
-- **Load balancing and caching mechanisms** should be implemented.
-- Percentage of generations resulting in faulty responses should be **< 5%**
+- **Load balancing** for large amounts of network requests should be implemented
