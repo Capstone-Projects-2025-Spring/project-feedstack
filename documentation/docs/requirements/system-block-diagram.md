@@ -4,32 +4,32 @@ sidebar_position: 2
 
 # System Block Diagram
 
-![SystemDesign](https://github.com/user-attachments/assets/3a744e34-2de4-457b-a338-1575c9ef13fd)
+![diagram-4](https://github.com/user-attachments/assets/99371d8f-499a-4299-8664-c37f2b06803d)
+Figure 1.1
+# FeedStack Modular Architecture
 
-high-level overview of **Feedstack’s system architecture**, ensuring smooth integration between the **frontend, backend, AI services, and real-time collaboration tools**:
+The FeedStack system follows a modular architecture, integrating various components to provide an efficient AI-driven web design feedback platform. The architecture consists of three primary layers:
 
-## 🏗️ System Components
+Client Application (Frontend & Hosting)
+Backend Services
+External Services (AI & Storage)
+This document describes the role of each component and their interactions in the system.
 
-## 🔧 Modular & Scalable Architecture
-The system is **modularly designed**, making it **easy to maintain and expand** as we introduce **new features**.
+## System Components
+- **Frontend (React, JavaScript, HTML, CSS)**  
+  Provides an intuitive UI for file uploads, AI interactions, and feedback visualization.
 
-### 🚀 Frontend (React)
-- Handles all **user interactions**, from **design uploads** to managing **feedback and collaboration sessions**.
-- Built with **React** for a **responsive and dynamic UI**.
+- **Backend (Django, Python)**  
+  Handles file storage, request processing, and AI API communication.
 
-### 🖥️ Backend (Django REST Framework)
-- Manages **API requests, processes data, and handles user authentication**.
-- Acts as the bridge between the **frontend and AI service**.
+- **AI Integration (OpenAI GPT-4o API, Word2Vec)**  
+  Processes design files, extracts insights, and categorizes feedback into predefined themes.
 
-### 🧠 AI Integration (OpenAI GPT-4o API)
-- Powers the **design analysis engine**.
-- Generates AI-driven **feedback** based on uploaded designs.
+- **Authentication (Google OAuth 2.0)**  
+  Enables secure user login.
 
-### 📦 Database (Firebase)
-- Stores **user data, chat history**, and supports **real-time synchronization** for collaboration.
+- **Storage & Database (Firebase)**  
+  Stores user-uploaded files, feedback data, and chat history.
 
-### ☁️ Deployment
-- **Grok** is used to host different parts of the application.
-- Ensures **fast performance, scalability, and seamless updates**.
-
----
+- **Version Control & Deployment (GitHub, Grok)**  
+  Manages the development process, ensuring stability and continuous updates.
