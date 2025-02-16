@@ -18,7 +18,7 @@ Feedstack's architecture is divided into three primary areas:
 
 1. **Client Application (Frontend):** The user-facing web interface where designs are uploaded, feedback is reviewed, and interactive features enhance the user experience.
 2. **Backend Services:** The core processing layer that handles file uploads, communicates with external analysis tools, and categorizes the feedback.
-3. **External Services:** APIs and cloud storage that assist in design analysis and persistent data management.
+3. **External Services:** Integrations with OpenAI’s GPT-4 Vision API for design analysis and Firebase for secure storage.
 
 ### 2.1 System Components and Interfaces
 
@@ -38,6 +38,21 @@ The frontend provides a streamlined interface where users can interact with the 
  
 <img width="582" alt="Screenshot 2025-02-16 at 5 04 56 PM" src="https://github.com/user-attachments/assets/608a99d9-0d03-4799-bee1-d4f42a015a94" />
 
+- **Components**
+  - `ParticipantLogin/` - Handles user authentication
+  - `DesignUpload/` - Upload interface for design files
+  - **Feedback/** - Displays AI-generated feedback
+    - `ImageViewer/` - Renders uploaded designs
+    - `ChatInterface/` - AI-powered chatbot for feedback queries
+    - `ThemeAccordion/` - Categorized design feedback
+
+- **Assets/**
+  - `Sounds/` - UI feedback sounds for accessibility
+
+- **Styles/** - Global styling for consistency
+
+- **Firebase Integration/** - Authentication and data storage
+
 
 #### **Backend Services (Django)**
 The backend is responsible for handling user requests, processing design files, and managing feedback generation.
@@ -54,6 +69,19 @@ The backend is responsible for handling user requests, processing design files, 
   - **Theme Categorizer:** Sorts feedback into predefined design categories.
   
 <img width="585" alt="Screenshot 2025-02-16 at 5 05 10 PM" src="https://github.com/user-attachments/assets/14802ff0-d10e-4358-a35b-b0b263e7dc3c" />
+
+- **feedback_app/**
+  - `views.py` - API endpoints for feedback and chat interactions
+  - `models.py` - Database models for user uploads and feedback
+  - `urls.py` - URL routing for backend services
+  - `serializers.py` - Data serialization for API responses
+
+- **feedstack_project/**
+  - `settings.py` - Configuration for database, authentication, and APIs
+  - `urls.py` - Main backend routing
+
+- **media/**
+  - `uploads/` - Secure storage for design files
 
 #### **External Services**
 Feedstack integrates external tools to enhance its functionality.
