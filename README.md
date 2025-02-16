@@ -32,8 +32,7 @@ Feedstack is an AI-powered design feedback system that combines GPT-4 Vision cap
 -Expandable theme summaries
 
 #### 1.3 System Block Diagram
-
-![Alt text](/img/feedstack1.png)
+(N/A)
 
 #### 1.4 Use Case 1 - Account Creation
 As a user, I want to create an account to maintain my design feedback history and project progress.
@@ -60,8 +59,6 @@ As a designer, I want to upload my design to receive AI-generated feedback on ac
 -The system validates and processes the file.
 -Feedback is generated using GPT-4 Vision and displayed in categorized themes.
 
-![Alt text](/img/feedstack7.png)
-
 #### 1.4 Use Case 4 - Collaborative Feedback Mode
 As a team member, I want to collaborate on design feedback in real-time with my colleagues.
 
@@ -70,13 +67,7 @@ As a team member, I want to collaborate on design feedback in real-time with my 
 -Team members can view, annotate, and leave comments on feedback.
 -Real-time updates ensure changes are visible to all participants.
 
-![Alt text](/img/feedstack8.png)
-
 #### 1.5 User Personas
-
-![Alt text](/img/feedstack2.png)
-
-![Alt text](/img/feedstack3.png)
 
 ### **2\. System Architecture**
 
@@ -111,14 +102,7 @@ As a team member, I want to collaborate on design feedback in real-time with my 
 
 **2.3 Framework Visual References / Prototypes**
 
-**Wireframes:**  
-![Alt text](/img/feedstack4.png)
-![Alt text](/img/feedstack5.png)
-![Alt text](/img/feedstack6.png)
-
-### 
-
-### 
+**Wireframes**
 
 ### **3\. Technical Requirements**
 
