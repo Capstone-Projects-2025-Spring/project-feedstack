@@ -87,17 +87,19 @@ Feedstack integrates external tools to enhance its functionality.
 
 ---
 
-## 4. Methods and Processing Logic
+## 4. Database Design and ERD
+![diagram-7](https://github.com/user-attachments/assets/f0f789e2-c525-475d-9650-d301cfc34ac8)
+Feedstack's database structure is designed to streamline user interactions, design uploads, and AI-driven feedback. Users can upload their designs, which are stored in the DESIGNUPLOADS table, linking each design to its uploader. Feedback on these designs is captured in the FEEDBACK table, allowing users to provide comments and ratings. To enhance organization, feedback is categorized under predefined THEMECATEGORIES, ensuring insights align with key UX principles. Additionally, KEYWORDS help analyze and relate uploaded designs to relevant themes. This setup keeps everything structured, making it easy to track, categorize, and improve design feedback.
 
-### **4.1 Feedback Generation**
-Feedstack processes design uploads through an external analysis service. The system ensures feedback is structured, relevant, and categorized based on UX/UI best practices.
+## Feedstack Database Structure
 
-### **4.2 Theme Categorization**
-The system analyzes feedback to classify it into **design categories** such as **Accessibility, Visual Hierarchy, and Color Contrast**, ensuring that users can easily identify areas that need improvement.
+- **Users (`USERS`)**: Stores user accounts and tracks uploads.
+- **Design Uploads (`DESIGNUPLOADS`)**: Holds uploaded designs linked to users.
+- **Feedback (`FEEDBACK`)**: Stores comments and ratings for designs.
+- **Theme Categories (`THEMECATEGORIES`)**: Groups feedback under UX/UI themes.
+- **Keywords (`KEYWORDS`)**: Helps categorize and relate designs.
 
-### **4.3 Keyword Highlighting**
-To enhance readability, key UX terms in the feedback are automatically highlighted. The system identifies important design-related phrases and presents them in a way that helps users quickly grasp suggestions.
 
----
+
 
 
