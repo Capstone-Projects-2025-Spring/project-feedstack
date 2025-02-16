@@ -3,114 +3,115 @@ sidebar_position: 1
 ---
 ## 1. Purpose
 
-Feedstack is designed to provide clear, actionable feedback on web designs. Users upload their design files and receive structured insights that help improve usability, visual consistency, and overall user experience. The system is built using Django for the backend and React for the frontend, and it leverages modern design analysis techniques to generate feedback that is both practical and easy to understand.
+Feedstack is a web-based tool designed to provide structured feedback on web and app designs. By allowing users to upload design files, the system generates categorized insights that help improve usability, consistency, and accessibility. The platform is built using Django for backend processing and React for the frontend interface, ensuring a scalable and efficient solution.
 
-This document outlines the architecture of Feedstack by detailing its components, the flow of data, and the methods used to generate and display feedback. Our goal is to create a scalable, maintainable solution that meets the needs of designers and developers alike.
+This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation and future scalability.
+
+---
 
 ## 2. System Overview and Architecture
 
-Feedstack’s architecture is organized into three main areas:
+Feedstack's architecture is divided into three primary areas:
 
-1. **Client Application (Frontend):** The user interface where designs are uploaded and feedback is displayed.
-2. **Backend Services:** The server-side logic that processes uploads, generates feedback, and manages user data.
-3. **External Services:** Third-party APIs and storage systems that enhance the system’s functionality.
+1. **Client Application (Frontend):** The user-facing web interface where designs are uploaded, feedback is reviewed, and interactive features enhance the user experience.
+2. **Backend Services:** The core processing layer that handles file uploads, communicates with external analysis tools, and categorizes the feedback.
+3. **External Services:** APIs and cloud storage that assist in design analysis and persistent data management.
 
-### 2.1 System Architecture Diagram
+### 2.1 System Components and Interfaces
 
-Below is the system architecture diagram that shows how the main components interact:
-
-![Feedstack Architecture](diagram-4.png)
-
-### 2.2 System Components and Interfaces
-
-#### Client Application (Frontend - React)
-The frontend is the face of Feedstack. It provides a simple, responsive interface for uploading designs and viewing feedback.
+#### **Client Application (Frontend - React)**
+The frontend provides a streamlined interface where users can interact with the system efficiently.
 
 - **Interfaces:**
-  - REST API calls to submit designs and fetch feedback.
-  - Real-time updates via WebSockets.
-  - State management handled through Redux or Zustand.
+  - REST API endpoints for uploading designs and retrieving feedback.
+  - WebSockets for handling real-time updates.
+  - State management via Redux or Zustand for optimal application performance.
 
-- **Key Features:**
-  - **Design Upload:** Users can easily upload and preview their design files.
-  - **Feedback Display:** Feedback is organized into themed sections for clarity.
-  - **Interactive Chat:** An interface allows users to ask questions and receive further insights.
-  - **Keyword Highlighting:** Important design terms are identified and emphasized.
+- **Core Functionalities:**
+  - **Design Upload:** Users can upload and preview design files.
+  - **Feedback Display:** AI-generated feedback is structured into categorized sections.
+  - **Interactive Chat:** Users can request additional clarification or insights.
+  - **Keyword Highlighting:** Key design terms are identified for better readability.
 
-#### Backend Services (Django)
-The backend is the heart of Feedstack. It processes design files, coordinates with external analysis tools, and organizes feedback for display.
+#### **Backend Services (Django)**
+The backend is responsible for handling user requests, processing design files, and managing feedback generation.
 
 - **Interfaces:**
-  - RESTful API endpoints for communication with the frontend.
-  - Integration with external analysis services for processing design files.
-  - Database communication via PostgreSQL.
+  - REST API to manage frontend communication.
+  - Integration with external analysis services to evaluate design files.
+  - PostgreSQL database for storing user data and feedback.
 
-- **Key Components:**
-  - **Design Processor:** Validates uploads, processes files, and coordinates analysis.
-  - **Feedback Generator:** Collects and formats feedback from external services.
-  - **User Management:** Handles authentication and user data.
-  - **Theme Categorizer:** Sorts feedback into design themes (e.g., accessibility, color contrast).
+- **Core Components:**
+  - **Design Processor:** Handles file validation, storage, and analysis requests.
+  - **Feedback Generator:** Collects and refines AI-generated feedback.
+  - **User Management:** Manages authentication and session handling.
+  - **Theme Categorizer:** Sorts feedback into predefined design categories.
 
-#### External Services
-Feedstack integrates with external systems to enhance its capabilities.
+#### **External Services**
+Feedstack integrates external tools to enhance its functionality.
 
-- **Design Analysis API:** Processes design files and returns detailed feedback based on established best practices.
-- **Storage Solutions:** Systems like Firebase are used to store feedback and interaction data securely.
+- **Design Analysis API:** Evaluates design files and returns structured feedback.
+- **Cloud Storage Solutions:** Stores user-uploaded designs and processed feedback securely.
+
+---
 
 ## 3. Data Flow and Use Cases
 
-### 3.1 Uploading a Design for Feedback
-1. A user uploads a design file via the web interface.
-2. The frontend sends the file to the backend using a REST API call.
-3. The backend validates the file and sends it to the design analysis API.
-4. The API returns detailed feedback, which is then categorized.
-5. The feedback is stored in the database and displayed on the frontend.
+### **3.1 Uploading a Design for Feedback**
+1. The user selects a design file and uploads it via the web interface.
+2. The frontend validates the file format and size before sending it to the backend.
+3. The backend verifies the file and forwards it to the analysis service.
+4. The external analysis service generates feedback and returns it to the backend.
+5. The backend categorizes the feedback and stores it in the database.
+6. The frontend retrieves the categorized feedback and presents it to the user.
 
-### 3.2 Processing and Categorizing Feedback
-1. The backend receives raw feedback from the analysis API.
-2. The theme categorizer organizes the feedback into relevant design categories.
-3. Key design elements are highlighted for emphasis.
-4. The final, structured feedback is saved and provided to the user.
+### **3.2 Processing and Categorizing Feedback**
+1. The backend receives raw feedback from the external analysis service.
+2. The **Theme Categorizer** processes the feedback, classifying it into predefined categories.
+3. Key UX terms are identified and highlighted for better comprehension.
+4. The processed feedback is stored in the database and sent back to the frontend.
+5. Users can interact with the feedback through an organized interface.
 
-## 4. Methods and Analysis Integration
+---
 
-### 4.1 Feedback Generation
-The system uses advanced analysis techniques to generate feedback on uploaded designs. The process includes:
-- Preprocessing the design file.
-- Analyzing the design using an external service.
-- Returning structured feedback that highlights areas for improvement.
+## 4. Methods and Processing Logic
 
-### 4.2 Theme Categorization
-Feedback is organized into themes by extracting key design terms and mapping them to predefined categories such as accessibility, visual hierarchy, and color contrast. This helps designers quickly identify areas that need attention.
+### **4.1 Feedback Generation**
+Feedstack processes design uploads through an external analysis service. The system ensures feedback is structured, relevant, and categorized based on UX/UI best practices.
 
-### 4.3 Keyword Highlighting
-To improve readability, key terms are automatically highlighted within the feedback. This is achieved by identifying important design-related keywords and displaying them in a visually distinct manner, making it easier for users to understand the suggestions.
+### **4.2 Theme Categorization**
+The system analyzes feedback to classify it into **design categories** such as **Accessibility, Visual Hierarchy, and Color Contrast**, ensuring that users can easily identify areas that need improvement.
+
+### **4.3 Keyword Highlighting**
+To enhance readability, key UX terms in the feedback are automatically highlighted. The system identifies important design-related phrases and presents them in a way that helps users quickly grasp suggestions.
+
+---
 
 ## 5. Development Environment and Version Control
 
-### 5.1 Development Environment
+### **5.1 Development Stack**
 - **Frontend:** React, Redux/Zustand, Tailwind CSS.
 - **Backend:** Django, PostgreSQL.
-- **Analysis Tools:** External design analysis API.
-- **Deployment:** Docker for containerization; hosting on a cloud platform.
-- **Testing:** Jest for the frontend; Pytest for the backend.
+- **External Processing Tools:** APIs for design evaluation.
+- **Deployment:** Docker for containerization.
+- **Testing:** Jest for frontend, Pytest for backend.
 
-### 5.2 Version Control and CI/CD
-- **Version Control:** Git and GitHub.
-- **Branching Strategy:** Feature-based branches with pull requests.
-- **CI/CD:** Automated testing and deployment using GitHub Actions.
-- **Security:** Secure API communication and JWT-based authentication.
+### **5.2 Version Control and CI/CD**
+- **Version Control:** Managed via Git and GitHub.
+- **Branching Strategy:** Feature-based branches with code reviews and pull requests.
+- **CI/CD Pipeline:** Automated testing and deployment workflows.
+- **Security Measures:** API security through JWT authentication and request validation.
+
+---
 
 ## 6. Architecture Compliance Checklist
 
-- **Clear Component Definitions:** Each part of the system has a well-defined role.
-- **Scalability:** The architecture is designed to grow with user needs.
-- **Security:** User data and communications are protected through modern authentication and validation techniques.
-- **Performance:** Optimized for fast responses through efficient state management and database indexing.
-- **User Experience:** Real-time updates and interactive elements are implemented to ensure a smooth user experience.
-
-
-This document will evolve with Feedstack’s development, ensuring that the architecture remains **robust, scalable, and adaptable**.
+- **Well-Defined System Components:** Each section has a clear role and responsibility.
+- **Scalability Considerations:** The system is designed to handle increasing user demand.
+- **Security Measures in Place:** API authentication and secure data handling.
+- **Performance Optimization:** Efficient state management and optimized database queries.
+- **User Experience Enhancements:** Features such as real-time updates improve usability.
 
 ---
+
 
