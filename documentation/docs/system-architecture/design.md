@@ -11,6 +11,9 @@ This document outlines the architectural foundation of Feedstack, detailing its 
 
 ## 2. System Overview and Architecture
 
+![diagram-4](https://github.com/user-attachments/assets/116dca1d-00ea-408b-a9d3-c97da226221e)
+
+
 Feedstack's architecture is divided into three primary areas:
 
 1. **Client Application (Frontend):** The user-facing web interface where designs are uploaded, feedback is reviewed, and interactive features enhance the user experience.
@@ -32,6 +35,9 @@ The frontend provides a streamlined interface where users can interact with the 
   - **Feedback Display:** AI-generated feedback is structured into categorized sections.
   - **Interactive Chat:** Users can request additional clarification or insights.
   - **Keyword Highlighting:** Key design terms are identified for better readability.
+ 
+<img width="582" alt="Screenshot 2025-02-16 at 5 04 56 PM" src="https://github.com/user-attachments/assets/608a99d9-0d03-4799-bee1-d4f42a015a94" />
+
 
 #### **Backend Services (Django)**
 The backend is responsible for handling user requests, processing design files, and managing feedback generation.
@@ -46,12 +52,14 @@ The backend is responsible for handling user requests, processing design files, 
   - **Feedback Generator:** Collects and refines AI-generated feedback.
   - **User Management:** Manages authentication and session handling.
   - **Theme Categorizer:** Sorts feedback into predefined design categories.
+  
+<img width="585" alt="Screenshot 2025-02-16 at 5 05 10 PM" src="https://github.com/user-attachments/assets/14802ff0-d10e-4358-a35b-b0b263e7dc3c" />
 
 #### **External Services**
 Feedstack integrates external tools to enhance its functionality.
 
-- **Design Analysis API:** Evaluates design files and returns structured feedback.
-- **Cloud Storage Solutions:** Stores user-uploaded designs and processed feedback securely.
+- **OpenAI API:** Evaluates design files and returns structured feedback.
+- **Database:** Stores user-uploaded designs and processed feedback securely.
 
 ---
 
@@ -89,33 +97,6 @@ The system analyzes feedback to classify it into **design categories** such as *
 
 ### **4.3 Keyword Highlighting**
 To enhance readability, key UX terms in the feedback are automatically highlighted. The system identifies important design-related phrases and presents them in a way that helps users quickly grasp suggestions.
-
----
-
-## 5. Development Environment and Version Control
-
-### **5.1 Development Stack**
-- **Frontend:** React, Redux/Zustand, Tailwind CSS.
-- **Backend:** Django, PostgreSQL.
-- **External Processing Tools:** APIs for design evaluation.
-- **Deployment:** Docker for containerization.
-- **Testing:** Jest for frontend, Pytest for backend.
-
-### **5.2 Version Control and CI/CD**
-- **Version Control:** Managed via Git and GitHub.
-- **Branching Strategy:** Feature-based branches with code reviews and pull requests.
-- **CI/CD Pipeline:** Automated testing and deployment workflows.
-- **Security Measures:** API security through JWT authentication and request validation.
-
----
-
-## 6. Architecture Compliance Checklist
-
-- **Well-Defined System Components:** Each section has a clear role and responsibility.
-- **Scalability Considerations:** The system is designed to handle increasing user demand.
-- **Security Measures in Place:** API authentication and secure data handling.
-- **Performance Optimization:** Efficient state management and optimized database queries.
-- **User Experience Enhancements:** Features such as real-time updates improve usability.
 
 ---
 
