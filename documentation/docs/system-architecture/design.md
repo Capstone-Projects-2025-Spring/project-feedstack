@@ -2,26 +2,79 @@
 sidebar_position: 1
 ---
 
-**Purpose**
+# Feedstack: Architectural Overview  
 
-The Design Document - Part I Architecture describes the software architecture and how the requirements are mapped into the design. This document will be a combination of diagrams and text that describes what the diagrams are showing.
+## 1. Purpose  
 
-**Requirements**
+Feedstack is a multimodal AI-driven feedback system designed to analyze and enhance web and app designs by providing structured, theme-based insights. Utilizing **Django (Python)** for backend processing, **React (JavaScript)** for frontend interactivity, and **OpenAI’s GPT-4o API**, Feedstack enables users to:  
 
-In addition to the general requirements the Design Document - Part I Architecture will contain:
+- Upload design files  
+- Receive AI-generated feedback  
+- Visualize insights in an interactive format  
 
-A description the different components and their interfaces. For example: client, server, database.
+The system categorizes feedback into predefined design themes such as **Accessibility, Visual Hierarchy, Color Contrast, and Consistency**, ensuring clarity and ease of interpretation.  
 
-For each component provide class diagrams showing the classes to be developed (or used) and their relationship.
+This document outlines the **technical structure and component interactions** of Feedstack, providing a comprehensive mapping between requirements and implementation. It details **system components, data flow, algorithms, and development considerations** to ensure scalability, maintainability, and alignment with user needs.  
 
-Sequence diagrams showing the data flow for _all_ use cases. One sequence diagram corresponds to one use case and different use cases should have different corresponding sequence diagrams.
+---
 
-Describe algorithms employed in your project, e.g. neural network paradigm, training and training data set, etc.
+## 2. System Components and Interfaces  
 
-If there is a database:
+Feedstack follows a **modular architecture**, allowing efficient scaling and future enhancements. The system consists of three primary components:  
 
-Entity-relation diagram.
+1. **Client (Frontend - React.js)**  
+2. **Server (Backend - Django/Python)**  
+3. **Database (PostgreSQL & Embeddings Engine)**  
 
-Table design.
+---
 
-A check list for architecture design is attached here [architecture\_design\_checklist.pdf](https://templeu.instructure.com/courses/106563/files/16928870/download?wrap=1 "architecture_design_checklist.pdf")  and should be used as a guidance.
+### 2.1 Client (Frontend - React.js)  
+
+The frontend serves as the **primary user interface**, enabling users to upload design files, interact with the **AI-powered chatbot**, and explore structured feedback in an intuitive manner.  
+
+#### **Interfaces:**  
+- **REST API** endpoints to send design uploads and retrieve feedback  
+- **WebSockets** for real-time updates and UI enhancements  
+- **State management** using **Redux/Zustand** to optimize user interactions  
+
+#### **Core Functionalities:**  
+- **Design Upload Module**: Facilitates user uploads and previews  
+- **Feedback Visualization**: Dynamically generates accordions based on AI-categorized themes  
+- **Keyword Highlighting**: Extracts and visually emphasizes design-related terms in feedback  
+
+---
+
+### 2.2 Server (Backend - Django/Python)  
+
+The backend is responsible for **processing user uploads, generating AI-driven feedback**, and structuring insights into **predefined design themes**. It integrates **machine learning models and embeddings** to enhance theme identification accuracy.  
+
+#### **Interfaces:**  
+- **REST API** for handling user requests and feedback retrieval  
+- **Integration with OpenAI’s GPT-4o API** for design analysis  
+- **PostgreSQL database** interactions for storing design feedback and embeddings  
+
+#### **Core Components:**  
+- **FeedbackProcessor**: Manages AI-generated insights and structures responses  
+- **ThemeCategorizer**: Classifies feedback into UX/UI design themes  
+- **KeywordExtractor**: Identifies and highlights key UX terminology  
+- **DatabaseManager**: Handles data persistence and retrieval  
+
+---
+
+### 2.3 Database (PostgreSQL & Embeddings Engine)  
+
+The database stores **user interactions, design feedback, and embeddings** for keyword recognition. It ensures **fast retrieval** and **accurate mapping** of feedback to design themes.  
+
+#### **Entity Relationships:**  
+- **Users** (user_id, email, registration_date)  
+- **Designs** (design_id, user_id, file_path, timestamp)  
+- **Feedback** (feedback_id, design_id, theme, AI-generated message)  
+- **Embeddings** (keyword, vector representation)  
+
+#### **Table Design Considerations:**  
+- **Optimized indexing** for quick feedback retrieval  
+- **Foreign key constraints** ensuring data integrity between user uploads and AI feedback  
+- **Embedding storage** for improved keyword mapping to UX themes  
+
+---
+
