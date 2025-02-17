@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.3.2">
 <title data-rh="true">design | Project Feedstack</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/system-architecture/design"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="design | Project Feedstack"><meta data-rh="true" name="description" content="1. Purpose"><meta data-rh="true" property="og:description" content="1. Purpose"><link data-rh="true" rel="icon" href="/project-feedstack/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/system-architecture/design"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/system-architecture/design" hreflang="en"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/system-architecture/design" hreflang="x-default"><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><link rel="stylesheet" href="/project-feedstack/assets/css/styles.e4cc120d.css">
-<script src="/project-feedstack/assets/js/runtime~main.68eea585.js" defer="defer"></script>
+<script src="/project-feedstack/assets/js/runtime~main.bc728c49.js" defer="defer"></script>
 <script src="/project-feedstack/assets/js/main.11d0209b.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -146,16 +146,128 @@
 <li>Shows how a user can navigate to the feedback of their uploaded document. This diagram skips over the login and file upload processes, and begins right after the system returns it&#x27;s intial feedback.</li>
 </ul>
 <hr>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="4-database-design-and-erd">4. Database Design and ERD<a href="#4-database-design-and-erd" class="hash-link" aria-label="Direct link to 4. Database Design and ERD" title="Direct link to 4. Database Design and ERD">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="4-simple-class-diagram">4. Simple Class Diagram<a href="#4-simple-class-diagram" class="hash-link" aria-label="Direct link to 4. Simple Class Diagram" title="Direct link to 4. Simple Class Diagram">​</a></h2>
+<p><img decoding="async" loading="lazy" src="https://github.com/user-attachments/assets/a00cd152-2587-420c-9520-c8450133abc3" alt="diagram-9" class="img_ev3q"></p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="5-database-design-and-erd">5. Database Design and ERD<a href="#5-database-design-and-erd" class="hash-link" aria-label="Direct link to 5. Database Design and ERD" title="Direct link to 5. Database Design and ERD">​</a></h2>
 <p><img decoding="async" loading="lazy" src="https://github.com/user-attachments/assets/f0f789e2-c525-475d-9650-d301cfc34ac8" alt="diagram-7" class="img_ev3q">
 Feedstack&#x27;s database structure is designed to streamline user interactions, design uploads, and AI-driven feedback. Users can upload their designs, which are stored in the DESIGNUPLOADS table, linking each design to its uploader. Feedback on these designs is captured in the FEEDBACK table, allowing users to provide comments and ratings. To enhance organization, feedback is categorized under predefined THEMECATEGORIES, ensuring insights align with key UX principles. Additionally, KEYWORDS help analyze and relate uploaded designs to relevant themes. This setup keeps everything structured, making it easy to track, categorize, and improve design feedback.</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="feedstack-database-structure">Feedstack Database Structure<a href="#feedstack-database-structure" class="hash-link" aria-label="Direct link to Feedstack Database Structure" title="Direct link to Feedstack Database Structure">​</a></h2>
+<h1>Database Structure</h1>
 <ul>
 <li><strong>Users (<code>USERS</code>)</strong>: Stores user accounts and tracks uploads.</li>
 <li><strong>Design Uploads (<code>DESIGNUPLOADS</code>)</strong>: Holds uploaded designs linked to users.</li>
 <li><strong>Feedback (<code>FEEDBACK</code>)</strong>: Stores comments and ratings for designs.</li>
 <li><strong>Theme Categories (<code>THEMECATEGORIES</code>)</strong>: Groups feedback under UX/UI themes.</li>
 <li><strong>Keywords (<code>KEYWORDS</code>)</strong>: Helps categorize and relate designs.</li>
-</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/Capstone-Projects-2025-Spring/project-feedstack/edit/main/documentation/docs/system-architecture/design.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody>nothing</tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>Random76520</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-feedstack/docs/category/system-architecture"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">System Architecture</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-feedstack/docs/system-architecture/development-environment"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Development Environment</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-purpose" class="table-of-contents__link toc-highlight">1. Purpose</a></li><li><a href="#2-system-overview-and-architecture" class="table-of-contents__link toc-highlight">2. System Overview and Architecture</a><ul><li><a href="#21-system-components-and-interfaces" class="table-of-contents__link toc-highlight">2.1 System Components and Interfaces</a></li></ul></li><li><a href="#3-sequence-diagrams" class="table-of-contents__link toc-highlight">3. Sequence Diagrams</a><ul><li><a href="#use-case-1-creating-an-account" class="table-of-contents__link toc-highlight">Use Case 1: Creating an Account</a></li><li><a href="#use-case-2-signing-in" class="table-of-contents__link toc-highlight">Use Case 2: Signing In</a></li><li><a href="#use-case-3-uploading-a-design-for-feedback" class="table-of-contents__link toc-highlight">Use Case 3: Uploading a Design for Feedback</a></li><li><a href="#use-case-4-navigating-feedback-using-bookmarks" class="table-of-contents__link toc-highlight">Use Case 4: Navigating Feedback Using Bookmarks</a></li></ul></li><li><a href="#4-database-design-and-erd" class="table-of-contents__link toc-highlight">4. Database Design and ERD</a></li><li><a href="#feedstack-database-structure" class="table-of-contents__link toc-highlight">Feedstack Database Structure</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-feedstack/docs/intro">Documentation</a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2025-Spring/project-feedstack" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2025 Project Feedstack, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</ul>
+<h1>6. Algorithms &amp; AI Model Explanation</h1>
+<p>Feedstack leverages AI-powered analysis to provide structured, actionable feedback on UI/UX designs. Two core AI components drive this process:</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="gpt-4o">GPT-4o<a href="#gpt-4o" class="hash-link" aria-label="Direct link to GPT-4o" title="Direct link to GPT-4o">​</a></h2>
+<p>The GPT-4 Vision API processes uploaded UI designs and provides structured feedback based on accessibility, typography, color contrast, and layout and more.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="processing-steps">Processing Steps<a href="#processing-steps" class="hash-link" aria-label="Direct link to Processing Steps" title="Direct link to Processing Steps">​</a></h3>
+<ol>
+<li>
+<p><strong>User Uploads a Design</strong></p>
+<ul>
+<li>Users submit a PNG, JPG, or PDF file via the Feedstack interface.</li>
+<li>The frontend validates the file type and size before sending it to the backend.</li>
+<li>The design is stored in Firebase Storage or a local Django directory.</li>
+</ul>
+</li>
+<li>
+<p><strong>Backend Prepares API Request</strong></p>
+<ul>
+<li>The Django backend retrieves the file path and prepares an API request.</li>
+<li>A structured prompt ensures relevant feedback, such as:<!-- -->
+<div class="language-plaintext codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-plaintext codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">Analyze this UI design and identify potential issues related to accessibility, typography, color contrast, and layout. Provide structured feedback categorized by theme.</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>AI Feedback Generation</strong></p>
+<ul>
+<li>The GPT-4 Vision API processes the image and generates detailed feedback based on UI/UX best practices.</li>
+<li>The response is structured into themes like Color Contrast, Typography, and Layout.</li>
+</ul>
+</li>
+<li>
+<p><strong>Storing &amp; Displaying Feedback</strong></p>
+<ul>
+<li>The backend categorizes and stores feedback in the PostgreSQL database.</li>
+<li>The frontend displays categorized feedback in an expandable accordion, making it easy for users to navigate.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="word2vec-keyword-extraction--theme-categorization">Word2Vec: Keyword Extraction &amp; Theme Categorization<a href="#word2vec-keyword-extraction--theme-categorization" class="hash-link" aria-label="Direct link to Word2Vec: Keyword Extraction &amp; Theme Categorization" title="Direct link to Word2Vec: Keyword Extraction &amp; Theme Categorization">​</a></h2>
+<p>To enhance readability, Feedstack automatically highlights key terms within feedback using Word2Vec, a word embedding model that links keywords to predefined design themes.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="processing-steps-1">Processing Steps<a href="#processing-steps-1" class="hash-link" aria-label="Direct link to Processing Steps" title="Direct link to Processing Steps">​</a></h3>
+<ol>
+<li>
+<p><strong>Extracting Feedback Text</strong></p>
+<ul>
+<li>After GPT-4 Vision generates feedback, the backend tokenizes the text and removes stopwords (e.g., “the”, “is”, “and”).</li>
+</ul>
+</li>
+<li>
+<p><strong>Identifying Key Terms</strong></p>
+<ul>
+<li>Word2Vec analyzes the text and identifies meaningful keywords based on their relevance to UI/UX design.</li>
+<li><strong>Example:</strong>
+<div class="language-plaintext codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-plaintext codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">The text contrast is too low → Word2Vec detects “contrast” as a keyword.</span><br></span><span class="token-line" style="color:#bfc7d5"><span class="token plain">It maps “contrast” to the Color Contrast theme based on learned word associations.</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Highlighting Keywords in Feedback</strong></p>
+<ul>
+<li>The frontend visually highlights important terms in feedback.</li>
+<li>Hovering over a keyword displays a tooltip with an explanation, such as:<!-- -->
+<div class="language-plaintext codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-plaintext codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">&quot;Low contrast affects readability. Aim for a minimum 4.5:1 ratio to meet accessibility guidelines.&quot;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Enhancing User Interaction</strong></p>
+<ul>
+<li>The chatbot references these highlighted keywords in conversations.</li>
+<li>Clicking a keyword navigates users to relevant resources (e.g., WCAG guidelines).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="data-sources-used">Data Sources Used<a href="#data-sources-used" class="hash-link" aria-label="Direct link to Data Sources Used" title="Direct link to Data Sources Used">​</a></h2>
+<ul>
+<li><strong>Word2Vec Model</strong>
+<ul>
+<li>Uses Google’s pre-trained Word2Vec embeddings.</li>
+<li>Can be fine-tuned with UX design articles and annotated datasets to improve theme categorization.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="fallback-handling-ensuring-system-reliability">Fallback Handling: Ensuring System Reliability<a href="#fallback-handling-ensuring-system-reliability" class="hash-link" aria-label="Direct link to Fallback Handling: Ensuring System Reliability" title="Direct link to Fallback Handling: Ensuring System Reliability">​</a></h2>
+<p>AI models can sometimes fail due to API errors, timeouts, or incorrect responses. Feedstack includes fallback mechanisms to maintain a seamless experience.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="handling-gpt-4-vision-api-failures">Handling GPT-4 Vision API Failures<a href="#handling-gpt-4-vision-api-failures" class="hash-link" aria-label="Direct link to Handling GPT-4 Vision API Failures" title="Direct link to Handling GPT-4 Vision API Failures">​</a></h3>
+<ul>
+<li>If the API times out or returns an invalid response, the system:<!-- -->
+<ul>
+<li>Retries the request up to <strong>3 times</strong>.</li>
+<li>If all retries fail, displays fallback feedback such as:<!-- -->
+<div class="language-plaintext codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-plaintext codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#bfc7d5"><span class="token plain">&quot;Ensure your text has sufficient contrast and your layout follows accessibility principles.&quot;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>Logs the error for debugging and future improvements.</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="handling-word2vec-keyword-extraction-failures">Handling Word2Vec Keyword Extraction Failures<a href="#handling-word2vec-keyword-extraction-failures" class="hash-link" aria-label="Direct link to Handling Word2Vec Keyword Extraction Failures" title="Direct link to Handling Word2Vec Keyword Extraction Failures">​</a></h3>
+<ul>
+<li>If no keywords are detected, the system:<!-- -->
+<ul>
+<li>Uses a predefined list of keywords from common design heuristics.</li>
+<li>Allows <strong>manual user tagging</strong>, so users can assign themes themselves if necessary.</li>
+</ul>
+</li>
+</ul>
+<hr></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/Capstone-Projects-2025-Spring/project-feedstack/edit/main/documentation/docs/system-architecture/design.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody>nothing</tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>Random76520</b></span></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-feedstack/docs/category/system-architecture"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">System Architecture</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-feedstack/docs/system-architecture/development-environment"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Development Environment</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-purpose" class="table-of-contents__link toc-highlight">1. Purpose</a></li><li><a href="#2-system-overview-and-architecture" class="table-of-contents__link toc-highlight">2. System Overview and Architecture</a><ul><li><a href="#21-system-components-and-interfaces" class="table-of-contents__link toc-highlight">2.1 System Components and Interfaces</a></li></ul></li><li><a href="#3-sequence-diagrams" class="table-of-contents__link toc-highlight">3. Sequence Diagrams</a><ul><li><a href="#use-case-1-creating-an-account" class="table-of-contents__link toc-highlight">Use Case 1: Creating an Account</a></li><li><a href="#use-case-2-signing-in" class="table-of-contents__link toc-highlight">Use Case 2: Signing In</a></li><li><a href="#use-case-3-uploading-a-design-for-feedback" class="table-of-contents__link toc-highlight">Use Case 3: Uploading a Design for Feedback</a></li><li><a href="#use-case-4-navigating-feedback-using-bookmarks" class="table-of-contents__link toc-highlight">Use Case 4: Navigating Feedback Using Bookmarks</a></li></ul></li><li><a href="#4-simple-class-diagram" class="table-of-contents__link toc-highlight">4. Simple Class Diagram</a></li><li><a href="#5-database-design-and-erd" class="table-of-contents__link toc-highlight">5. Database Design and ERD</a></li><li><a href="#gpt-4o" class="table-of-contents__link toc-highlight">GPT-4o</a><ul><li><a href="#processing-steps" class="table-of-contents__link toc-highlight">Processing Steps</a></li></ul></li><li><a href="#word2vec-keyword-extraction--theme-categorization" class="table-of-contents__link toc-highlight">Word2Vec: Keyword Extraction &amp; Theme Categorization</a><ul><li><a href="#processing-steps-1" class="table-of-contents__link toc-highlight">Processing Steps</a></li></ul></li><li><a href="#data-sources-used" class="table-of-contents__link toc-highlight">Data Sources Used</a></li><li><a href="#fallback-handling-ensuring-system-reliability" class="table-of-contents__link toc-highlight">Fallback Handling: Ensuring System Reliability</a><ul><li><a href="#handling-gpt-4-vision-api-failures" class="table-of-contents__link toc-highlight">Handling GPT-4 Vision API Failures</a></li><li><a href="#handling-word2vec-keyword-extraction-failures" class="table-of-contents__link toc-highlight">Handling Word2Vec Keyword Extraction Failures</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-feedstack/docs/intro">Documentation</a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2025-Spring/project-feedstack" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2025 Project Feedstack, Inc. Built with Docusaurus.</div></div></div></footer></div>
 </body>
 </html>
