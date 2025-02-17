@@ -2,10 +2,11 @@
 sidebar_position: 1
 ---
 ## 1. Purpose
+This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation while ensuring future scalability.
 
-Feedstack is a web-based tool designed to provide structured feedback on web and app designs. By allowing users to upload design files, the system generates categorized insights that help improve usability, consistency, and accessibility. The platform is built using Django for backend processing and React for the frontend interface, ensuring a scalable and efficient solution.
+A core feature of Feedstack is its structured feedback system, facilitated through the use of "Chapters." These Chapters categorize insights based on visual design principles, offering a clear and organized way to analyze and improve design elements. Feedback is presented through a peripheral side panel, allowing users to view critiques in context with their design files. This structured approach ensures that design principles remain at the forefront of the evaluation process, helping users make informed adjustments that align with usability best practices.
 
-This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation and future scalability.
+By emphasizing the role of Chapters, Feedstack not only provides feedback but also educates users on fundamental design principles, fostering a deeper understanding of effective design techniques. The platform's architecture is designed to support real-time processing and iterative refinements, ensuring that users receive actionable insights throughout the design process.
 
 ---
 
@@ -123,18 +124,18 @@ Feedstack integrates external tools to enhance its functionality.
 
 ## 5. Database Design and ERD
 ![diagram-7](https://github.com/user-attachments/assets/f0f789e2-c525-475d-9650-d301cfc34ac8)
-Feedstack's database structure is designed to streamline user interactions, design uploads, and AI-driven feedback. Users can upload their designs, which are stored in the DESIGNUPLOADS table, linking each design to its uploader. Feedback on these designs is captured in the FEEDBACK table, allowing users to provide comments and ratings. To enhance organization, feedback is categorized under predefined THEMECATEGORIES, ensuring insights align with key UX principles. Additionally, KEYWORDS help analyze and relate uploaded designs to relevant themes. This setup keeps everything structured, making it easy to track, categorize, and improve design feedback.
+Feedstack's database structure is designed to streamline user interactions, design uploads, and AI-driven feedback. Users can upload their designs, which are stored in the DESIGNUPLOADS table, linking each design to its uploader. Feedback on these designs is captured in the FEEDBACK table, allowing users to provide comments and ratings. To enhance organization, feedback is categorized under predefined THEMECATEGORIES, ensuring insights align with key visual design principles. Additionally, KEYWORDS help analyze and relate uploaded designs to relevant themes. This setup keeps everything structured, making it easy to track, categorize, and improve design feedback.
 
 # Database Structure
 
 - **Users (`USERS`)**: Stores user accounts and tracks uploads.
 - **Design Uploads (`DESIGNUPLOADS`)**: Holds uploaded designs linked to users.
 - **Feedback (`FEEDBACK`)**: Stores comments and ratings for designs.
-- **Theme Categories (`THEMECATEGORIES`)**: Groups feedback under UX/UI themes.
+- **Theme Categories (`THEMECATEGORIES`)**: Groups feedback under visual design  themes.
 - **Keywords (`KEYWORDS`)**: Helps categorize and relate designs.
 
 # 6. Algorithms & AI Model Explanation 
-Feedstack leverages AI-powered analysis to provide structured, actionable feedback on UI/UX designs. Two core AI components drive this process:
+Feedstack leverages AI-powered analysis to provide structured, actionable feedback on visual designs. Two core AI components drive this process:
 
 ## GPT-4o
 
@@ -150,11 +151,11 @@ The GPT-4 Vision API processes uploaded UI designs and provides structured feedb
    - The Django backend retrieves the file path and prepares an API request.
    - A structured prompt ensures relevant feedback, such as:
      ```plaintext
-     Analyze this UI design and identify potential issues related to accessibility, typography, color contrast, and layout. Provide structured feedback categorized by theme.
+     Analyze this UI design and identify potential issues related to accessibility, typography, color contrast, and layout. Provide structured feedback categorized by theme. Respond as if you were a design expert & educator providing simple, constructive feedback to a design student
      ```
 
 3. **AI Feedback Generation**
-   - The GPT-4 Vision API processes the image and generates detailed feedback based on UI/UX best practices.
+   - The GPT-4 Vision API processes the image and generates detailed feedback based on the best visual design practices.
    - The response is structured into themes like Color Contrast, Typography, and Layout.
 
 4. **Storing & Displaying Feedback**
@@ -172,7 +173,7 @@ To enhance readability, Feedstack automatically highlights key terms within feed
    - After GPT-4 Vision generates feedback, the backend tokenizes the text and removes stopwords (e.g., “the”, “is”, “and”).
 
 2. **Identifying Key Terms**
-   - Word2Vec analyzes the text and identifies meaningful keywords based on their relevance to UI/UX design.
+   - Word2Vec analyzes the text and identifies meaningful keywords based on their relevance to visual design.
    - **Example:**
      ```plaintext
      The text contrast is too low → Word2Vec detects “contrast” as a keyword.
@@ -196,7 +197,7 @@ To enhance readability, Feedstack automatically highlights key terms within feed
 
 - **Word2Vec Model**
   - Uses Google’s pre-trained Word2Vec embeddings.
-  - Can be fine-tuned with UX design articles and annotated datasets to improve theme categorization.
+  - Can be fine-tuned with visual design articles and annotated datasets to improve theme categorization.
 
 ---
 
