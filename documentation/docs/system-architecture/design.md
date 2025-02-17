@@ -2,10 +2,11 @@
 sidebar_position: 1
 ---
 ## 1. Purpose
+This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation while ensuring future scalability.
 
-Feedstack is a web-based tool designed to provide structured feedback on web and app designs. By allowing users to upload design files, the system generates categorized insights that help improve usability, consistency, and accessibility. The platform is built using Django for backend processing and React for the frontend interface, ensuring a scalable and efficient solution.
+A core feature of Feedstack is its structured feedback system, facilitated through the use of "Chapters." These Chapters categorize insights based on visual design principles, offering a clear and organized way to analyze and improve design elements. Feedback is presented through a peripheral side panel, allowing users to view critiques in context with their design files. This structured approach ensures that design principles remain at the forefront of the evaluation process, helping users make informed adjustments that align with usability best practices.
 
-This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation and future scalability.
+By emphasizing the role of Chapters, Feedstack not only provides feedback but also educates users on fundamental design principles, fostering a deeper understanding of effective design techniques. The platform's architecture is designed to support real-time processing and iterative refinements, ensuring that users receive actionable insights throughout the design process.
 
 ---
 
