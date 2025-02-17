@@ -151,7 +151,7 @@ The GPT-4 Vision API processes uploaded UI designs and provides structured feedb
    - The Django backend retrieves the file path and prepares an API request.
    - A structured prompt ensures relevant feedback, such as:
      ```plaintext
-     Analyze this UI design and identify potential issues related to accessibility, typography, color contrast, and layout. Provide structured feedback categorized by theme.
+     Analyze this UI design and identify potential issues related to accessibility, typography, color contrast, and layout. Provide structured feedback categorized by theme. Respond as if you were a design expert & educator providing simple, constructive feedback to a design student
      ```
 
 3. **AI Feedback Generation**
