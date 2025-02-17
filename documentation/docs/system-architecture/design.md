@@ -88,6 +88,23 @@ Feedstack integrates external tools to enhance its functionality.
 
 - **OpenAI API:** Evaluates design files and returns structured feedback.
 - **Database:** Stores user-uploaded designs and processed feedback securely.
+- **Google OAuth 2.0** Connection between Google accounts and feedstack Accounts
+
+## 2.2 Security and Authentication
+The client and application hold distint roles in software security.
+
+### Application Responsibilities
+
+  - **Flow and Endpoints:** Redirect user with specified scope after consenting.
+  - **Manage Authentication:** Store user data/cookies and start website session.
+  - **Token Exchange:** Send authorization code to receive access token or refresh token.
+  - **Session Timeout:** Request validation to detect outdated session.
+
+### Google Responsibilities
+
+  - **Token Management:** Send access tokens and refresh tokens while revoking stale tokens.
+  - **Provide User Information:** Send profile to endpoint.
+  - **Login Process:** Consent, username, login, possible 2FA.
 
 ---
 
