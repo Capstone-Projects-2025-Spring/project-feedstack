@@ -1,0 +1,11 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+openai
+pillow
+python-dotenv
+scikit-learn
+nltk
+seaborn
+matplotlib
