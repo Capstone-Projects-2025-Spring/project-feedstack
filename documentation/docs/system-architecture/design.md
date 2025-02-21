@@ -90,6 +90,19 @@ Feedstack integrates external tools to enhance its functionality.
 - **OpenAI API:** Evaluates design files and returns structured feedback.
 - **Database:** Stores user-uploaded designs and processed feedback securely.
 
+- **Python Libraries/**
+  - `Django`
+  - `djangorestframework`
+  - `djangorestframework-simplejwt`
+  - `django-cors-headers`
+  - `openai`
+  - `pillow`
+  - `python-dotenv`
+  - `scikit-learn`
+  - `nltk`
+  - `seaborn`
+  - `matplotlib`
+
 ---
 
 ## 3. Sequence Diagrams
