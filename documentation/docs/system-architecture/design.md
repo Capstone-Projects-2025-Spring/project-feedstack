@@ -85,17 +85,17 @@ The backend is responsible for handling user requests, processing design files, 
   - `uploads/` - Secure storage for design files
 
 - **Python Libraries/**
-  - Django
-  - djangorestframework
-  - djangorestframework-simplejwt
-  - django-cors-headers
-  - openai
-  - pillow
-  - python-dotenv
-  - scikit-learn
-  - nltk
-  - seaborn
-  - matplotlib
+  - `Django`
+  - `djangorestframework`
+  - `djangorestframework-simplejwt`
+  - `django-cors-headers`
+  - `openai`
+  - `pillow`
+  - `python-dotenv`
+  - `scikit-learn`
+  - `nltk`
+  - `seaborn`
+  - `matplotlib`
 
 #### **External Services**
 Feedstack integrates external tools to enhance its functionality.
