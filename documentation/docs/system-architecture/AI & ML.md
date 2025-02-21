@@ -58,3 +58,31 @@ To enhance readability, Feedstack automatically highlights key terms within feed
 4. **Enhancing User Interaction**
    - The chatbot references these highlighted keywords in conversations.
    - Clicking a keyword navigates users to relevant resources (e.g., WCAG guidelines).
+
+## Data Sources Used
+
+- **Word2Vec Model**
+  - Uses Google’s pre-trained Word2Vec embeddings.
+  - Can be fine-tuned with visual design articles and annotated datasets to improve theme categorization.
+
+---
+
+## Fallback Handling: Ensuring System Reliability
+
+AI models can sometimes fail due to API errors, timeouts, or incorrect responses. Feedstack includes fallback mechanisms to maintain a seamless experience.
+
+### Handling GPT-4 Vision API Failures
+- If the API times out or returns an invalid response, the system:
+  - Retries the request up to **3 times**.
+  - If all retries fail, displays fallback feedback such as:
+    ```plaintext
+    "Ensure your text has sufficient contrast and your layout follows accessibility principles."
+    ```
+  - Logs the error for debugging and future improvements.
+
+### Handling Word2Vec Keyword Extraction Failures
+- If no keywords are detected, the system:
+  - Uses a predefined list of keywords from common design heuristics.
+  - Allows **manual user tagging**, so users can assign themes themselves if necessary.
+
+---
