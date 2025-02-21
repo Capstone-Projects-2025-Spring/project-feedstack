@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# User Personas
+# User Personas & Use Cases
 
 ## User Persona 1
 ![feedstack3.png](..%2Fimg%2Ffeedstack3.png)
