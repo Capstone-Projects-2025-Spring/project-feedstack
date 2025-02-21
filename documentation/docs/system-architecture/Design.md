@@ -1,6 +1,9 @@
 ---
 sidebar_position: 1
 ---
+
+# Feedstack Architecture
+
 ## Purpose
 This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation while ensuring future scalability.
 
