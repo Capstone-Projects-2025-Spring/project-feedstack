@@ -6,7 +6,6 @@ sidebar_position: 4
 
 ## 1. AI Feedback Generation
 - The system must analyze web design files using the OpenAI GPT-4o.
-- AI-generated feedback must be categorized into predefined design themes.
 - The chatbot shall provide interactive explanations and follow-up suggestions related to design principles.
 - Feedback should highlight key design elements such as typography, color contrast, and structure.
 
@@ -21,15 +20,17 @@ sidebar_position: 4
   - **Principle Definition:** A concise AI-generated explanation of the design principle.
   - **Relation to Design:** An explanation of how the principle applies to the uploaded design.
   - **Key Terms:** Highlighted words within the feedback that relate to the design principle.
+- AI-generated feedback must be categorized into predefined design themes.
 - Users must be able to expand and collapse chapters to view relevant feedback.
 
 ## 4. Bookmark Navigation
 - Users shall be able to bookmark specific feedback points.
 - Clicking a bookmark must anchor the user to the corresponding feedback location in the chat.
-- The system shall allow quick switching between related design themes using bookmarks.
+- All existing bookmarks will be stored in chronological order on the left side of the screen.
 
 ## 5. Dynamic Chapter Discovery
 - As new design principles are introduced in the feedback conversation, corresponding chapters must appear in the accordion panel.
+- Design principles can be in a pre-defined list.
 - Related but **not explicitly mentioned** design principles shall appear in a faded "Emerging Chapters" state.
 - Users must be able to interact with emerging chapters to expand and gain additional insights.
 
