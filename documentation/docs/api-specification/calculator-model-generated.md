@@ -2,60 +2,129 @@
 sidebar_position: 3
 ---
 
-# CalculatorModel.java
-(generated using [Javadoc to Markdown](https://delight-im.github.io/Javadoc-to-Markdown/))
+# Feedstack API - Class Documentation
 
-## `public class CalculatorModel`
+## Class: `Participant`
 
-This is the model of this MVC implementation of a calculator. It performs the functions of the calculator and keeps track of what the user has entered.
+### Description
+Represents an entity interacting with the system, primarily a user submitting design feedback.
 
-* **Author:** Tom Bylander
+### Fields
+- `private int id` - Unique identifier for the participant.
+- `private String name` - Full name of the participant.
+- `private String email` - Contact email for correspondence and authentication.
+- `private Date createdAt` - Timestamp indicating the entity creation time.
 
-## `private double displayValue`
+### Methods
+#### `public Participant()`
+**Description:** Default constructor that initializes participant properties.
 
-This is the numeric value of the number the user is entering, or the number that was just calculated.
+#### `public int getId()`
+**Returns:** Unique identifier of the participant.
 
-## `private double internalValue`
+#### `public String getName()`
+**Returns:** Full name of the participant.
 
-This is the previous value entered or calculated.
+#### `public String getEmail()`
+**Returns:** Email of the participant.
 
-## `private String displayString`
+#### `public Date getCreatedAt()`
+**Returns:** Timestamp of when the participant record was created.
 
-This is the String corresponding to what the user. is entering
+---
 
-## `private String operation`
+## Class: `ChatMessage`
 
-This is the last operation entered by the user.
+### Description
+Stores dialogue between a participant and the system for design feedback.
 
-## `private boolean start`
 
-This is true if the next digit entered starts a new value.
+### Fields
+- `private int id` - Unique identifier for the chat message.
+- `private Participant participant` - Reference to the participant.
+- `private String message` - Message content.
+- `private Date timestamp` - System-generated timestamp upon message creation.
 
-## `private boolean dot`
+### Methods
+#### `public ChatMessage()`
+**Description:** Default constructor that initializes chat message properties.
 
-This is true if a decimal dot has been entered for the current value.
+#### `public int getId()`
+**Returns:** Unique identifier of the chat message.
 
-## `public CalculatorModel()`
+#### `public Participant getParticipant()`
+**Returns:** Associated participant.
 
-Initializes the instance variables.
+#### `public String getMessage()`
+**Returns:** Content of the message.
 
-## `public String getValue()`
+#### `public Date getTimestamp()`
+**Returns:** Timestamp of when the message was created.
 
-* **Returns:** the String value of what was just calculated
+---
 
-  or what the user is entering
+## Class: `DesignUpload`
 
-## `public void update(String text)`
+### Description
+Represents an uploaded design file submitted for evaluation and feedback.
 
-Updates the values maintained by the calculator based on the button that the user has just clicked.
+### Fields
+- `private int id` - Unique identifier for the uploaded design.
+- `private Participant participant` - Reference to the participant.
+- `private File file` - Uploaded design file.
+- `private Date uploadedAt` - Timestamp of file submission.
 
-* **Parameters:** `text` — is the name of the button that the user has just clicked
+### Methods
+#### `public DesignUpload()`
+**Description:** Default constructor that initializes design upload properties.
 
-## `public double operationAdd(double rhs, double lhs)`
+#### `public int getId()`
+**Returns:** Unique identifier of the design upload.
 
-Operation to add two numbers. <pre> operationAdd(3,2); // should equal 5.0 </pre>
+#### `public Participant getParticipant()`
+**Returns:** Associated participant.
 
-* **Parameters:**
-  * `rhs` — `double` representing the right hand side of the operator
-  * `lhs` — `double` representing the left hand side of the operator
-* **Returns:** `double`
+#### `public File getFile()`
+**Returns:** The uploaded design file.
+
+#### `public Date getUploadedAt()`
+**Returns:** Timestamp of when the file was uploaded.
+
+---
+
+## Class: `OpenAIIntegration`
+
+### Description
+Handles integration with OpenAI API for AI-generated feedback.
+
+### Methods
+#### `public static String generateFeedback(String inputText)`
+**Description:** Sends user input to OpenAI API for analysis and returns AI-generated feedback.
+
+#### **Parameters**
+- `inputText (String)` - User-supplied textual input.
+
+#### **Returns**
+- `(String)` - AI-generated response based on input analysis.
+
+#### **Exceptions**
+- `ConnectionError` - Raised if OpenAI API is unreachable.
+- `TimeoutError` - Raised if the request exceeds response time limits.
+- `ValueError` - Raised if input text is empty or improperly formatted.
+
+---
+
+## Class: `APIErrorHandling`
+
+### Description
+Manages exception handling across the API to ensure robust error reporting.
+
+### Methods
+#### `public static String handleException(Exception e)`
+**Description:** Provides a formatted error message for caught exceptions.
+
+#### **Parameters**
+- `e (Exception)` - Exception instance thrown by the system.
+
+#### **Returns**
+- `(String)` - A formatted error message for the API response.
