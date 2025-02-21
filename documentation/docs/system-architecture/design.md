@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 ---
-## 1. Purpose
+## Purpose
 This document outlines the architectural foundation of Feedstack, detailing its key components, data flow, and system interactions. The primary objective is to establish a robust and maintainable framework that supports real-time feedback generation while ensuring future scalability.
 
 A core feature of Feedstack is its structured feedback system, facilitated through the use of "Chapters." These Chapters categorize insights based on visual design principles, offering a clear and organized way to analyze and improve design elements. Feedback is presented through a peripheral side panel, allowing users to view critiques in context with their design files. This structured approach ensures that design principles remain at the forefront of the evaluation process, helping users make informed adjustments that align with usability best practices.
@@ -10,7 +10,7 @@ By emphasizing the role of Chapters, Feedstack not only provides feedback but al
 
 ---
 
-## 2. System Overview and Architecture
+## System Overview and Architecture
 
 ![diagram-4](https://github.com/user-attachments/assets/116dca1d-00ea-408b-a9d3-c97da226221e)
 
@@ -105,7 +105,7 @@ Feedstack integrates external tools to enhance its functionality.
 
 ---
 
-### Use Case 3: Uploading a Design for Feedback
+### Use Case: Uploading a Design for Feedback
 ![Seq3_Use3_ProjectInCS](https://github.com/user-attachments/assets/d08c8d08-5c36-45b9-8c41-c4ab47f93cba)
 
 - Visualizes how the user can upload their design into Feedstack. In this scenario, the user begins from the login screen and works their way into the file upload destination that's housed in the dashboard. This diagram also shows how the file uploading errors will be handled. 
