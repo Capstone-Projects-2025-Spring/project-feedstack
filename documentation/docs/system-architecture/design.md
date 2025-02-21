@@ -84,6 +84,12 @@ The backend is responsible for handling user requests, processing design files, 
 - **media/**
   - `uploads/` - Secure storage for design files
 
+#### **External Services**
+Feedstack integrates external tools to enhance its functionality.
+
+- **OpenAI API:** Evaluates design files and returns structured feedback.
+- **Database:** Stores user-uploaded designs and processed feedback securely.
+
 - **Python Libraries/**
   - `Django`
   - `djangorestframework`
@@ -96,12 +102,6 @@ The backend is responsible for handling user requests, processing design files, 
   - `nltk`
   - `seaborn`
   - `matplotlib`
-
-#### **External Services**
-Feedstack integrates external tools to enhance its functionality.
-
-- **OpenAI API:** Evaluates design files and returns structured feedback.
-- **Database:** Stores user-uploaded designs and processed feedback securely.
 
 ---
 
