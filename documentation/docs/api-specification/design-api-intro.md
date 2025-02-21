@@ -6,36 +6,139 @@ description: What should be in this section.
 Design Document - Part II API
 =============================
 
-**Purpose**
+# Software API Implementation Documentation
 
-This Design Document gives the complete design of the software implementation. This information should be in structured comments (e.g. Javadoc) in the source files. We encourage the use of a documentation generation tool to generate a draft of your API that you can augment to include the following details.
+## Purpose
+This document outlines the complete design of the software API implementation, detailing data structures, methods, preconditions, postconditions, parameters, return values, and exceptions. The documentation is structured for clarity and precision, ensuring technical accuracy and completeness.
 
-**Requirements**
+---
 
-In addition to the general documentation requirements the Design Document - Part II API will contain:
+## 1. Data Models (`models.py`)
 
-General review of the software architecture for each module specified in Design Document - Part I Architecture. Please include your class diagram as an important reference.
+### **Participant**
+**Purpose:** Represents an entity interacting with the system, primarily a user submitting design feedback.
 
-**For each class define the data fields, methods.**
+#### **Data Fields**
+- `id` (*IntegerField, Primary Key*) - Unique identifier for the participant.
+- `name` (*CharField, max_length=255*) - Full name of the participant.
+- `email` (*EmailField, unique=True*) - Contact email for correspondence and authentication.
+- `created_at` (*DateTimeField, auto_now_add=True*) - Timestamp indicating the entity creation time.
 
-The purpose of the class.
+---
 
-The purpose of each data field.
+### **ChatMessage**
+**Purpose:** Stores dialogue between a participant and the system for design feedback.
 
-The purpose of each method
+#### **Data Fields**
+- `id` (*IntegerField, Primary Key*) - Unique identifier for the chat message.
+- `participant` (*ForeignKey to Participant, CASCADE*) - Links message to the corresponding participant.
+- `message` (*TextField*) - The message content provided by the user.
+- `timestamp` (*DateTimeField, auto_now_add=True*) - System-generated timestamp upon message creation.
 
-Pre-conditions if any.
+---
 
-Post-conditions if any.
+### **DesignUpload**
+**Purpose:** Represents an uploaded design file submitted for evaluation and feedback.
 
-Parameters and data types
+#### **Data Fields**
+- `id` (*IntegerField, Primary Key*) - Unique identifier for the uploaded design.
+- `participant` (*ForeignKey to Participant, CASCADE*) - Associates upload with a participant.
+- `file` (*FileField, upload_to='designs/'*) - Reference to the uploaded design file.
+- `uploaded_at` (*DateTimeField, auto_now_add=True*) - Timestamp of file submission.
 
-Return value and output variables
+---
 
-Exceptions thrown\* (PLEASE see note below for details).
+## 2. Data Serialization (`serializers.py`)
 
-An example of an auto-generated and then augmented API specification is here ([Fiscal Design Document 2\_API.docx](https://templeu.instructure.com/courses/106563/files/16928898?wrap=1 "Fiscal Design Document 2_API.docx") )
+### **ParticipantSerializer**
+**Purpose:** Converts `Participant` model instances into a serializable format for API responses.
 
-This group developed their API documentation by hand ([Design Document Part 2 API-1\_MovieMatch.docx](https://templeu.instructure.com/courses/106563/files/16928899?wrap=1 "Design Document Part 2 API-1_MovieMatch.docx") )
+#### **Methods**
+- `Meta (Class)` - Defines associated model and fields.
 
-\*At the top level, or where appropriate, all exceptions should be caught and an error message that is meaningful to the user generated. It is not OK to say ("xxxx has encountered a problem and will now close (OK?)". Error messages and recovery procedures should be documented in the User’s Manual.
+---
+
+### **ChatMessageSerializer**
+**Purpose:** Serializes `ChatMessage` instances for API consumption.
+
+---
+
+### **DesignUploadSerializer**
+**Purpose:** Serializes `DesignUpload` instances for API responses.
+
+---
+
+## 3. API Endpoints (`views.py`)
+
+### **ParticipantViewSet**
+**Purpose:** Provides API endpoints for managing participants.
+
+#### **Methods**
+- `list(self, request)` - Retrieves all participants in JSON format.
+- `create(self, request)` - Registers a new participant entity.
+
+---
+
+### **ChatMessageViewSet**
+**Purpose:** Manages chat messages exchanged during feedback sessions.
+
+#### **Methods**
+- `list(self, request)` - Returns all chat messages.
+- `create(self, request)` - Stores a new chat message.
+
+---
+
+### **DesignUploadViewSet**
+**Purpose:** Handles file upload operations related to design submissions.
+
+#### **Methods**
+- `list(self, request)` - Returns all uploaded designs.
+- `create(self, request)` - Processes a new design upload.
+
+---
+
+## 4. API Routing (`urls.py`)
+
+| Endpoint               | ViewSet                 |
+|------------------------|------------------------|
+| `api/participants/`    | `ParticipantViewSet`   |
+| `api/chat-messages/`   | `ChatMessageViewSet`   |
+| `api/design-uploads/`  | `DesignUploadViewSet`  |
+
+---
+
+## 5. OpenAI API Integration (`openai_integration.py`)
+
+### **Function: `generate_feedback(input_text: str) -> str`**
+
+**Purpose:** Sends user input to OpenAI API for analysis and returns AI-generated feedback.
+
+#### **Preconditions**
+- `input_text` must be a non-empty string.
+
+#### **Postconditions**
+- Returns AI-generated feedback as a formatted string.
+
+#### **Parameters**
+- `input_text (str)` - User-supplied textual input.
+
+#### **Return Value**
+- `str` - AI-generated response based on input analysis.
+
+#### **Exceptions**
+- `ConnectionError` - Raised if OpenAI API is unreachable.
+- `TimeoutError` - Raised if the request exceeds response time limits.
+- `ValueError` - Raised if input text is empty or improperly formatted.
+
+---
+
+## 6. Error Handling and Recovery
+
+- All exceptions are caught at the highest application level.
+- Meaningful error messages are returned instead of generic failure messages.
+
+**Example:** If OpenAI API is unavailable, the API responds with:
+```json
+{
+  "error": "AI feedback service is temporarily unavailable."
+}
