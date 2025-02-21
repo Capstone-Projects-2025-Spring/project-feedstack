@@ -92,6 +92,28 @@ Represents an uploaded design file submitted for evaluation and feedback.
 
 ---
 
+## Class: 'Views'
+
+### Description: Save and decode uploaded files for necessary image data. Create views based on model feedback.
+
+### Methods
+#### 'ParticipantView(APIView)'
+**Description:** Initialize participant & serializer LLM
+
+#### 'DesignFeedbackView(APIView)'
+**Description:**Decode base64 image data and save as image file
+
+#### 'ChatbotView(APIView)'
+**Description:** Respond to user message with provided design
+
+#### 'IdentifyThemeView(APIView)'
+**Description:** Establish baselines for chatbot to focus on UI/UX principles
+
+#### 'SummarizeView(APIView)'
+**Description:** Provide direction to the chatbot on how to summarize content
+
+---
+
 ## Class: `OpenAIIntegration`
 
 ### Description
