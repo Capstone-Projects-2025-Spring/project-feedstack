@@ -105,18 +105,6 @@ Feedstack integrates external tools to enhance its functionality.
 
 ---
 
-## 3. Sequence Diagrams
-
-### Use Case 1: Creating an Account
-![Seq1_Use1_ProjectInCS](https://github.com/user-attachments/assets/df4bb4a0-7e01-45a1-a230-a29b6af99793)
-
-- Showcases the steps required to create an account. This diagram also shows the types of errors that may be encountered, as well as how they would be handled. 
-
-### Use Case 2: Signing In
-![Seq2_Use2_ProjectInCS](https://github.com/user-attachments/assets/c522a020-2512-4bbc-b5f1-ff236cb07f26)
-
-- Displays the process of signing in with a preexisting account. Shows how the application will handle invalid login credentials. It also showcases how a user can reset their password in the event they forget it. 
-
 ### Use Case 3: Uploading a Design for Feedback
 ![Seq3_Use3_ProjectInCS](https://github.com/user-attachments/assets/d08c8d08-5c36-45b9-8c41-c4ab47f93cba)
 
@@ -132,77 +120,6 @@ Feedstack integrates external tools to enhance its functionality.
 ## 4. Simple Class Diagram
 
 ![diagram-9](https://github.com/user-attachments/assets/a00cd152-2587-420c-9520-c8450133abc3)
-
-
-
-## 5. Database Design and ERD
-![diagram-7](https://github.com/user-attachments/assets/f0f789e2-c525-475d-9650-d301cfc34ac8)
-Feedstack's database structure is designed to streamline user interactions, design uploads, and AI-driven feedback. Users can upload their designs, which are stored in the DESIGNUPLOADS table, linking each design to its uploader. Feedback on these designs is captured in the FEEDBACK table, allowing users to provide comments and ratings. To enhance organization, feedback is categorized under predefined THEMECATEGORIES, ensuring insights align with key visual design principles. Additionally, KEYWORDS help analyze and relate uploaded designs to relevant themes. This setup keeps everything structured, making it easy to track, categorize, and improve design feedback.
-
-# Database Structure
-
-- **Users (`USERS`)**: Stores user accounts and tracks uploads.
-- **Design Uploads (`DESIGNUPLOADS`)**: Holds uploaded designs linked to users.
-- **Feedback (`FEEDBACK`)**: Stores comments and ratings for designs.
-- **Theme Categories (`THEMECATEGORIES`)**: Groups feedback under visual design  themes.
-- **Keywords (`KEYWORDS`)**: Helps categorize and relate designs.
-
-# 6. Algorithms & AI Model Explanation 
-Feedstack leverages AI-powered analysis to provide structured, actionable feedback on visual designs. Two core AI components drive this process:
-
-## GPT-4o
-
-The GPT-4 Vision API processes uploaded UI designs and provides structured feedback based on accessibility, typography, color contrast, and layout and more.
-
-### Processing Steps
-1. **User Uploads a Design**
-   - Users submit a PNG, JPG, or PDF file via the Feedstack interface.
-   - The frontend validates the file type and size before sending it to the backend.
-   - The design is stored in Firebase Storage or a local Django directory.
-
-2. **Backend Prepares API Request**
-   - The Django backend retrieves the file path and prepares an API request.
-   - A structured prompt ensures relevant feedback, such as:
-     ```plaintext
-     Analyze this UI design and identify potential issues related to accessibility, typography, color contrast, and layout. Provide structured feedback categorized by theme. Respond as if you were a design expert & educator providing simple, constructive feedback to a design student
-     ```
-
-3. **AI Feedback Generation**
-   - The GPT-4 Vision API processes the image and generates detailed feedback based on the best visual design practices.
-   - The response is structured into themes like Color Contrast, Typography, and Layout.
-
-4. **Storing & Displaying Feedback**
-   - The backend categorizes and stores feedback in the PostgreSQL database.
-   - The frontend displays categorized feedback in an expandable accordion, making it easy for users to navigate.
-
----
-
-## Word2Vec: Keyword Extraction & Theme Categorization
-
-To enhance readability, Feedstack automatically highlights key terms within feedback using Word2Vec, a word embedding model that links keywords to predefined design themes.
-
-### Processing Steps
-1. **Extracting Feedback Text**
-   - After GPT-4 Vision generates feedback, the backend tokenizes the text and removes stopwords (e.g., “the”, “is”, “and”).
-
-2. **Identifying Key Terms**
-   - Word2Vec analyzes the text and identifies meaningful keywords based on their relevance to visual design.
-   - **Example:**
-     ```plaintext
-     The text contrast is too low → Word2Vec detects “contrast” as a keyword.
-     It maps “contrast” to the Color Contrast theme based on learned word associations.
-     ```
-
-3. **Highlighting Keywords in Feedback**
-   - The frontend visually highlights important terms in feedback.
-   - Hovering over a keyword displays a tooltip with an explanation, such as:
-     ```plaintext
-     "Low contrast affects readability. Aim for a minimum 4.5:1 ratio to meet accessibility guidelines."
-     ```
-
-4. **Enhancing User Interaction**
-   - The chatbot references these highlighted keywords in conversations.
-   - Clicking a keyword navigates users to relevant resources (e.g., WCAG guidelines).
 
 ---
 
