@@ -24,7 +24,7 @@ Feedstack's architecture is divided into three primary areas:
 2. **Backend Services:** The core processing layer that handles file uploads, communicates with external analysis tools, and categorizes the feedback.
 3. **External Services:** Integrations with OpenAI’s GPT-4 Vision API for design analysis and Firebase for secure storage.
 
-### 2.1 System Components and Interfaces
+### System Components and Interfaces
 
 #### **Client Application (Frontend - React)**
 The frontend provides a streamlined interface where users can interact with the system efficiently.
@@ -113,14 +113,14 @@ Feedstack integrates external tools to enhance its functionality.
 
 - Visualizes how the user can upload their design into Feedstack. In this scenario, the user begins from the login screen and works their way into the file upload destination that's housed in the dashboard. This diagram also shows how the file uploading errors will be handled. 
 
-### Use Case 4: Navigating Feedback Using Bookmarks
+### Use Case: Navigating Feedback Using Bookmarks
 ![Seq4_Use4_ProjectsInCS](https://github.com/user-attachments/assets/4934b33f-ba97-4852-a2b9-0232347b0ea8)
 
 - Shows how a user can navigate to the feedback of their uploaded document. This diagram skips over the login and file upload processes, and begins right after the system returns it's intial feedback. 
 
 ---
 
-## 4. Simple Class Diagram
+## Simple Class Diagram
 
 ![diagram-9](https://github.com/user-attachments/assets/a00cd152-2587-420c-9520-c8450133abc3)
 
