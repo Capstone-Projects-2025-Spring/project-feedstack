@@ -42,6 +42,12 @@ sidebar_position: 4
 - Users must be able to navigate between multiple instances of feedback for the same design principle within a chapter.
 - Clicking forward or backward through instances must also scroll the chat to the relevant portion of the conversation.
 
+## 8. Logging
+- The system must log user interactions for research purposes.
+- Logs must be kept as simple as possible, containing:
+  - **Action:** The event that occurred (e.g., "Clicked Accordion").
+  - **Content:** Additional details about the action (e.g., "Typography Chapter").
+  - **Timestamp:** The exact time of the interaction.
 
 # Non-Functional Requirements
 
