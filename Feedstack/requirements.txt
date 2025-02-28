@@ -9,3 +9,4 @@ scikit-learn
 nltk
 seaborn
 matplotlib
+pytest
