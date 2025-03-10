@@ -24,9 +24,8 @@ sidebar_position: 4
 - Users must be able to expand and collapse chapters to view relevant feedback.
 
 ## 4. Bookmark Navigation
-- Users shall be able to bookmark specific feedback points.
-- Clicking a bookmark must anchor the user to the corresponding feedback location in the chat.
-- All existing bookmarks will be stored in chronological order on the left side of the screen.
+- Users shall be able to bookmark specific feedback points
+- Clicking a bookmark must scroll the user to the bookmarked point
 
 ## 5. Dynamic Chapter Discovery
 - As new design principles are introduced in the feedback conversation, corresponding chapters must appear in the accordion panel.
