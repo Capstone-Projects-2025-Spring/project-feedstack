@@ -6,6 +6,7 @@ openai
 pillow
 python-dotenv
 scikit-learn
+firebase
 nltk
 seaborn
 matplotlib
