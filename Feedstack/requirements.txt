@@ -7,5 +7,6 @@ pillow
 python-dotenv
 scikit-learn
 nltk
+firebase
 seaborn
 matplotlib
