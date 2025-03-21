@@ -2,18 +2,19 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCmNWPwbpek6hBUkNdgvWMqleSOeIxNXeU",
-  authDomain: "feedstack-9c0f0.firebaseapp.com",
-  databaseURL: "https://feedstack-9c0f0-default-rtdb.firebaseio.com",
-  projectId: "feedstack-9c0f0",
-  storageBucket: "feedstack-9c0f0.appspot.com",
-  messagingSenderId: "292313609879",
-  appId: "1:292313609879:web:ee17ae3981145507bc1bd2",
-  measurementId: "G-K7LH8GFHVL"
+  apiKey: "AIzaSyDSXtO4bs9GD8TBX1r6bIpOi12D0ThKK-I",
+  authDomain: "feedstack-b2cc1.firebaseapp.com",
+  projectId: "feedstack-b2cc1",
+  storageBucket: "feedstack-b2cc1.firebasestorage.app",
+  messagingSenderId: "515733206423",
+  appId: "1:515733206423:web:66a5f536180b46576a80d2",
+  measurementId: "G-RWHK7GJ3CF"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export { app, db };
+const analytics = getAnalytics(app);
+
+export { app, db, analytics };
