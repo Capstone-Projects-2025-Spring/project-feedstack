@@ -11,7 +11,7 @@ from openai import OpenAI
 import logging
 # from sentence_transformers import SentenceTransformer
 import numpy as np
-import re
+from Feedstack.feedback_app.crew_integration import CrewIntegration
 
 logger = logging.getLogger(__name__)
 
@@ -66,26 +66,17 @@ class DesignFeedbackView(APIView):
             )
 
             # Save the image file
+            temp_path = f"/tmp/design_image_{design.id}.{ext}"
             design.image.save(f"design_image.{ext}", io.BytesIO(img_file))
+
+            #Save a temporary copy for CrewAI processing
+            with open(temp_path, 'wb') as f:
+                f.write(img_file)
 
             try:
                 logger.info(f"Sending request to OpenAI API for design {design.id}")
-                
-                response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": [
-                                {"type": "text", "text": "You are a design expert. Engage with the user, a novice designer, by giving highly valuable design feedback.Give your deep insights and unstructured feedback on the design, Respond as casually, conversationally, and concisely as possible in 10 sentences unless explicitly asked by the user to elaborate. Ask follow-up questions if needed. Allow the user guide the pace and flow of the conversation topic. Avoid the use of number or bullet point lists."},
-                                {"type": "image_url", "image_url": {"url": f"data:image/{ext};base64,{imgstr}"}}
-                            ],
-                        }
-                    ],
-                    max_tokens=1500,
-                )
-                
-                feedback = response.choices[0].message.content
+
+                feedback = CrewIntegration.analyze_design(temp_path)
                 design.feedback = feedback
                 design.save()
                 logger.info(f"Feedback generated successfully for design {design.id}")
@@ -164,18 +155,9 @@ class ChatbotView(APIView):
 class IdentifyThemeView(APIView):
     def post(self, request):
         message = request.data.get('message')
-        print(f"Received message from identify theme: {message}")
 
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that identifies the main theme of a message, for reference use design principles and UX/UI design principles to identify and do so by using a single word. Identify this main theme from the following list: Balance, Consistency, Contrast, Alignment & Spacing, Accessibility"},
-                    {"role": "user", "content": f"Identify the main theme of this message: {message}"}
-                ],
-                max_tokens=500
-            )
-            theme = response.choices[0].message.content.strip()
+            theme = CrewIntegration.indentify_theme(message)
             return Response({"theme": theme}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -184,59 +166,64 @@ class SummarizeView(APIView):
     def post(self, request):
         theme = request.data.get('theme')
         message = request.data.get('message')
-        
-        # print(f"Full request.data: {request.data}")  # Log the entire request data
-        
-        # print(f"Received theme: {theme}")
-        # print(f"Received text: {message}")
+
         try:
-            definition_response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that provides definitions for design principles."},
-                    {"role": "user", "content": f"Provide a concise definition for the design principle: {theme}"}
-                ],
-                max_tokens=100
-            )
-            definition = definition_response.choices[0].message.content.strip()
+            summary_data = CrewIntegration.generate_summary(theme, message)
 
-            relation_response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that explains how design principles relate to design."},
-                    {"role": "user", "content": f"Explain how the principle of {theme} relates to design in 2-3 sentences."}
-                ],
-                max_tokens=150
-            )
-            relation = relation_response.choices[0].message.content.strip()
+            return Response(summary_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            key_terms_response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that identifies key terms related to design principles."},
-                    {"role": "user", "content": f"List up to 5 key terms that is related to the design principle of {theme}, separated by commas. Identify the key terms from the text in this message:\n\n{message}."}
-                ],
-                max_tokens=50
-            )
-            key_terms = key_terms_response.choices[0].message.content.strip().split(', ')
+class ProcessDesignView(APIView):
+    def post(self, request):
+        participant_id = request.data.get('participant')
+        if not participant_id:
+            return Response({"error": "participant ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            participant = Participant.objects.get(participant_id = participant_id)
+        except Participant.DoesNotExist:
+            return Response({"error": "Participant not found"}, status=status.HTTP_404_NOT_FOUND)
+        image_data = request.data.get('image')
+        if not image_data:
+            return Response({"error": "No image data provided"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Decode base64 image
+            format, imgstr = image_data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = base64.b64decode(imgstr)
 
-            summary_response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that summarizes text."},
-                    {"role": "user", "content": f"Summarize this text in two sentences:\n\n{message}"}
-                ],
-                max_tokens=100
+            # Save image to a temporary file
+            with io.BytesIO(data) as f:
+                with Image.open(f) as img:
+                    img_io = io.BytesIO()
+                    img.save(img_io, format=ext)
+                    img_file = img_io.getvalue()
+
+            # Create a new DesignUpload instance
+            design = DesignUpload.objects.create(
+                participant=participant,
+                image=f"design_image.{ext}"
             )
-            summary = summary_response.choices[0].message.content.strip()
+
+            temp_path = f"/tmp/design_image_{design.id}.{ext}"
+            with open(temp_path, 'wb') as f:
+                f.write(img_file)
+            result = CrewIntegration.process_design(temp_path)
+            feedback = result.get('feedback', [])
+            themes = result.get('themes', [])
+            structured_content = result.get('structured_content', {})
+
+            design.feedback = feedback
+            design.save()
 
             return Response({
-                "definition": definition,
-                "relation": relation,
-                "key_terms": key_terms,
-                "summary": summary
-            }, status=status.HTTP_200_OK)
+                "feedback": feedback,
+                "themes": themes,
+                "structured_content": structured_content,
+                "image_url": design.image.url
+            }, status=status.HTTP_201_CREATED)
         except Exception as e:
+            logger.error(f"Error processing design: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # class HighlightTermsView(APIView):

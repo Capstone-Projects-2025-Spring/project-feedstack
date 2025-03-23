@@ -31,6 +31,8 @@ function DesignUpload() {
     reader.readAsDataURL(selectedFile);
   };
 
+  const [useCrewWorkflow, setUseCrewWorkflow] = useState(false);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!file) {
@@ -41,7 +43,12 @@ function DesignUpload() {
 
     try {
       const base64Image = await convertToBase64(file);
-      const response = await axios.post('http://localhost:8000/api/upload/', {
+
+      const endpoint = useCrewWorkflow ?
+          'http://localhost:8000/api/process-design/':
+          'http://localhost:8000/api/upload/';
+
+      const response = await axios.post(endpoint, {
         image: base64Image,
         participant: participantId
       });
@@ -61,12 +68,17 @@ function DesignUpload() {
             Sender: "Feedstack"
           });
 
+        if(useCrewWorkflow && response.data.themes){
+          //
+        }
+
         navigate('/feedback', {
           state: {
             feedback: response.data.feedback,
             participantId,
             imageUrl: response.data.image_url,
-            docId
+            docId,
+            structuredContent: response.data.structured_content || null
           }
         });
       } else {
@@ -90,39 +102,53 @@ function DesignUpload() {
   };
 
   return (
-    <div className="design-upload-container">
-      <div className="upload-card">
-        <h1>Upload Your Design</h1>
-        <p>Share your creative work and get AI-powered feedback</p>
-        <form onSubmit={handleSubmit}>
-          <div className="file-input-container">
-            <input
-              type="file"
-              onChange={handleFileChange}
-              accept=".png,.jpg,.jpeg,.pdf"
-              id="file-input"
-            />
-            <label htmlFor="file-input" className="file-input-label">
-              {file ? file.name : 'Choose a file'}
-            </label>
-          </div>
-          {preview && (
-            <div className="image-preview">
-              <img src={preview} alt="Preview" />
+      <div className="design-upload-container">
+        <div className="upload-card">
+          <h1>Upload Your Design</h1>
+          <p>Share your creative work and get AI-powered feedback</p>
+          <form onSubmit={handleSubmit}>
+            <div className="file-input-container">
+              <input
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".png,.jpg,.jpeg,.pdf"
+                  id="file-input"
+              />
+              <label htmlFor="file-input" className="file-input-label">
+                {file ? file.name : 'Choose a file'}
+              </label>
             </div>
-          )}
-          <button type="submit" disabled={!file || isLoading}>
-            {isLoading ? 'Uploading...' : 'Get Feedback'}
-          </button>
-        </form>
-      </div>
-      {isLoading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
-          <p>Analyzing your design...</p>
+            {preview && (
+                <div className="image-preview">
+                  <img src={preview} alt="Preview"/>
+                </div>
+            )}
+            <button type="submit" disabled={!file || isLoading}>
+              {isLoading ? 'Uploading...' : 'Get Feedback'}
+            </button>
+          </form>
         </div>
-      )}
-    </div>
+        {isLoading && (
+            <div className="loading-overlay">
+              <div className="loading-spinner"></div>
+              <p>Analyzing your design...</p>
+            </div>
+        )}
+
+
+        <div className="workflow-selection">
+          <label>
+            <input
+                type="checkbox"
+                checked={useCrewWorkflow}
+                onChange={(e) => setUseCrewWorkflow(e.target.checked)}
+            />
+            Use advanced AI workflow (CrewAI)
+          </label>
+        </div>
+
+
+      </div>
   );
 }
 
