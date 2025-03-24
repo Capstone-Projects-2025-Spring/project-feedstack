@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import  { addParticipant } from '../firestore';
-import { logTestEvent } from '../firebaseAnalytics'
+import { logTestEvent, logErrorEvent } from '../firebaseAnalytics'
 
 function ParticipantLogin() {
   const [participantId, setParticipantId] = useState('');
@@ -31,6 +31,7 @@ function ParticipantLogin() {
       
     } catch (error) {
       console.error('Error creating participant:', error);
+      logErrorEvent(error.message, error.response?.data?.error || 'Unknown error');
       alert('Error: ' + (error.response?.data?.error || 'An unknown error occurred'));
     }
   };
