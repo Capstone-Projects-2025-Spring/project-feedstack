@@ -32,6 +32,7 @@ function Feedback() {
   const [keyTerms, setKeyTerms] = useState([]);
   const [expandedSections, setExpandedSections] = useState({});
   const [teaserChapters, setTeaserChapters] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
   const location = useLocation();
   const { feedback, participantId, imageUrl, docId } = location.state;
   const chatContainerRef = useRef(null);
@@ -74,6 +75,26 @@ function Feedback() {
       console.error('Error generating summary:', error);
     }
   };
+
+  const generateSuggestions = async (lastMessage) => {
+    try {
+      const response = await axios.post('http://localhost:8000/api/generate-suggestions/', {
+        message: lastMessage
+      });
+      setSuggestions(response.data.suggestions);
+    } catch (error) {
+      console.error('Error generating suggestions:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (chatMessages.length > 0) {
+      const lastMessage = chatMessages[chatMessages.length - 1];
+      if (!lastMessage.is_user) {
+        generateSuggestions(lastMessage.content);
+      }
+    }
+  }, [chatMessages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -342,6 +363,21 @@ function Feedback() {
           />
           <button type="submit">Send</button>
         </form>
+        {suggestions.length > 0 && (
+          <div className="suggestions-container">
+            {suggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                className="suggestion-button"
+                onClick={() => {
+                  setNewMessage(suggestion);
+                }}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <div className="accordion-container">
         <h3>Theme Summaries</h3>
