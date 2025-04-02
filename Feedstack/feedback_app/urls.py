@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ParticipantView, DesignFeedbackView, ChatbotView, IdentifyThemeView, SummarizeView
+from .views import ParticipantView, DesignFeedbackView, ChatbotView, IdentifyThemeView, SummarizeView, GenerateSuggestionsView
 
 urlpatterns = [
     path('participant/', ParticipantView.as_view(), name='participant'),
@@ -8,5 +8,6 @@ urlpatterns = [
     # path('suggested-topics/', SuggestedTopicsView.as_view(), name='suggested_topics'),
     path('identify-theme/', IdentifyThemeView.as_view(), name='identify_theme'),
     path('summarize/', SummarizeView.as_view(), name='summarize'),
+    path('generate-suggestions/', GenerateSuggestionsView.as_view(), name='generate-suggestions'),
     # path('highlight-terms/', HighlightTermsView.as_view(), name='highlight_terms'),
 ]

@@ -482,3 +482,47 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.suggestions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 20px;
+  margin-top: 4px;
+  background-color: transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suggestion-button {
+  background: none;
+  border: 1px solid #e0e0e0;
+  padding: 8px 16px;
+  text-align: left;
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-style: italic;
+  max-width: 100%;
+  min-width: 0; /* Allows text to wrap */
+  white-space: normal; /* Allows text to wrap */
+  word-wrap: break-word; /* Breaks long words if needed */
+  overflow-wrap: break-word; /* Modern version of word-wrap */
+  display: inline-flex; /* Better alignment for wrapped text */
+  align-items: center; /* Centers text vertically */
+  line-height: 1.4; /* Better line spacing for wrapped text */
+  height: auto; /* Allows height to adjust to content */
+  min-height: 36px; /* Minimum height for single line */
+}
+
+.suggestion-button:hover {
+  background-color: #f8f8f8;
+  border-color: #4CAF50;
+  color: #4CAF50;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

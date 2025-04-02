@@ -265,3 +265,25 @@ class SummarizeView(APIView):
 
 #         # print("Highlighted terms:", highlighted_terms)  # Debug print
 #         return Response({"highlighted_terms": highlighted_terms}, status=status.HTTP_200_OK)
+
+class GenerateSuggestionsView(APIView):
+    def post(self, request):
+        message = request.data.get('message')
+        
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are a helpful design assistant. Generate 2-3 very concise questions (max 15 words each) that help explore the design further. Each question should be a single short sentence, specific to the current design discussion. Keep them clear and focused on one aspect of the design. Format each question on a new line."},
+                    {"role": "user", "content": f"Generate follow-up questions based on this message: {message}"}
+                ],
+                max_tokens=500
+            )
+            
+            questions = response.choices[0].message.content.strip().split('\n')
+            questions = [q.strip() for q in questions if q.strip()]
+            
+            return Response({"suggestions": questions}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error generating follow-up questions: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
