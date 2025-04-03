@@ -274,14 +274,20 @@ class GenerateSuggestionsView(APIView):
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are a helpful design assistant. Generate 2-3 very concise questions (max 15 words each) that help explore the design further. Each question should be a single short sentence, specific to the current design discussion. Keep them clear and focused on one aspect of the design. Format each question on a new line."},
-                    {"role": "user", "content": f"Generate follow-up questions based on this message: {message}"}
+                    {"role": "system", "content": "You are a helpful design assistant. Generate exactly 3 concise, specific questions (7-15 words each) about the design that would naturally follow in the conversation. Format as direct questions like 'How can we improve the element alignment?' or 'What options exist for refining white space?' Focus on practical design aspects like typography, spacing, color, alignment, and brand identity. Make each question standalone and conversational."},
+                    {"role": "user", "content": f"Generate follow-up questions based on this message about design feedback: {message}"}
                 ],
                 max_tokens=500
             )
             
-            questions = response.choices[0].message.content.strip().split('\n')
-            questions = [q.strip() for q in questions if q.strip()]
+            # Extract just the questions and clean them up
+            questions_text = response.choices[0].message.content.strip()
+            # Split by line breaks or numbered items
+            questions = [q.strip() for q in re.split(r'\n|^\d+\.', questions_text) if q.strip()]
+            # Remove any quotation marks
+            questions = [q.strip('"\'') for q in questions if q]
+            # Limit to 3 questions
+            questions = questions[:3]
             
             return Response({"suggestions": questions}, status=status.HTTP_200_OK)
         except Exception as e:

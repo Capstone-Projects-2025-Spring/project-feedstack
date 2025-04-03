@@ -3,11 +3,15 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import MarkdownIt from 'markdown-it';
 import popSound from '../assets/pop.mp3';
-import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
-import { color } from 'framer-motion';
+// Comment out Firebase imports
+// import { db } from '../firebase';
+// import { collection, addDoc, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
 
-const md = new MarkdownIt();
+const md = new MarkdownIt({
+  html: false,  // Disable HTML tags in source
+  breaks: true, // Convert '\n' in paragraphs into <br>
+  linkify: true // Autoconvert URL-like text to links
+});
 
 const themeColors = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -20,7 +24,7 @@ const themeColors = [
   '#AD1457', '#558B2F', '#311B92', '#E65100', '#004D40'
 ];
 
-const themes = ['Balance', 'Contrast', 'Consistency', 'Aligment & Spacing', 'Accessibility']
+const themes = ['Balance', 'Contrast', 'Consistency', 'Alignment & Spacing', 'Accessibility'];
 const colorScale = ['#D3D3D3', '#B0B0B0', '#8C8C8C', '#696969', '#4A4A4A'];
 
 function Feedback() {
@@ -34,25 +38,27 @@ function Feedback() {
   const [teaserChapters, setTeaserChapters] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const location = useLocation();
-  const { feedback, participantId, imageUrl, docId } = location.state;
+  const { feedback, participantId, imageUrl, docId } = location.state || 
+    { feedback: 'No feedback available', participantId: 'temp-user', imageUrl: '', docId: 'temp-doc' };
   const chatContainerRef = useRef(null);
   const audioRef = useRef(new Audio(popSound));
 
   useEffect(() => {
     setChatMessages([{ content: feedback, is_user: false }]);
     generateInitialSummary(feedback);
-
-    // const initialThemes = themes.ma((theme, index) => ({
-    //   theme,
-    //   // id, set the theme id later for firebase doc
-    //   color: colorScale[0],
-    //   instances: [], // no mentions initially
-    //   currentInstance: 0,
-    // }));
-    // setChapters(initialThemes);
-
   }, [feedback]);
 
+  // Ensure all chapters have necessary properties
+  useEffect(() => {
+    setChapters(prevChapters => 
+      prevChapters.map(chapter => ({
+        ...chapter,
+        instances: chapter.instances || [],
+        currentInstance: chapter.currentInstance || 0,
+        key_terms: chapter.key_terms || []
+      }))
+    );
+  }, []);
 
   const generateInitialSummary = async (feedback) => {
     try {
@@ -63,16 +69,31 @@ function Feedback() {
       const { definition, relation, key_terms, summary } = response.data;
       setChapters([{ 
         theme: 'Initial Feedback', 
-        definition,
-        relation,
-        key_terms,
-        summary, 
+        definition: definition || '',
+        relation: relation || '',
+        key_terms: key_terms || [],
+        summary: summary || '', 
         color: themeColors[0],
-        id: 'initial'
+        id: 'initial',
+        instances: [feedback],
+        currentInstance: 0
       }]);
       setBookmarks([{ messageIndex: 0, color: themeColors[0], id: 'initial' }]);
     } catch (error) {
       console.error('Error generating summary:', error);
+      // Set default values if API call fails
+      setChapters([{
+        theme: 'Initial Feedback',
+        definition: 'Definition not available',
+        relation: 'Relation not available',
+        key_terms: [],
+        summary: 'Summary not available',
+        color: themeColors[0],
+        id: 'initial',
+        instances: [feedback],
+        currentInstance: 0
+      }]);
+      setBookmarks([{ messageIndex: 0, color: themeColors[0], id: 'initial' }]);
     }
   };
 
@@ -81,9 +102,10 @@ function Feedback() {
       const response = await axios.post('http://localhost:8000/api/generate-suggestions/', {
         message: lastMessage
       });
-      setSuggestions(response.data.suggestions);
+      setSuggestions(response.data.suggestions || []);
     } catch (error) {
       console.error('Error generating suggestions:', error);
+      setSuggestions([]);
     }
   };
 
@@ -105,14 +127,8 @@ function Feedback() {
     setNewMessage('');
 
     try {
-      // Add user message to Firestore
-      const userMessageDoc = {
-        Message: userMessage.content,
-        Timestamp: serverTimestamp(),
-        Sender: "Participant"
-      };
-      await addDoc(collection(db, `Participants/${docId}/ChatLogs`), userMessageDoc);  
-      console.log('User message added to Firestore:', userMessageDoc);
+      // Log to console instead of Firebase
+      console.log('User message (Firebase disabled):', userMessage.content);
 
       const response = await axios.post('http://localhost:8000/api/chat/', {
         participant_id: participantId,
@@ -121,16 +137,9 @@ function Feedback() {
       });
       
       const botMessage = response.data.bot_message;
-      // setChatMessages(prevMessages => [...prevMessages, botMessage]);
       
-      // Add bot message to Firestore
-      const botMessageDoc = {
-        Message: botMessage.content,
-        Timestamp: serverTimestamp(),
-        Sender: "Feedstack"
-      };
-      await addDoc(collection(db, `Participants/${docId}/ChatLogs`), botMessageDoc);  
-      console.log('Bot message added to Firestore:', botMessageDoc);
+      // Log to console instead of Firebase
+      console.log('Bot message (Firebase disabled):', botMessage.content);
       
       const themeResponse = await axios.post('http://localhost:8000/api/identify-theme/', {
         message: botMessage.content,
@@ -145,76 +154,78 @@ function Feedback() {
       });
 
       const { definition, relation, key_terms, summary } = summaryResponse.data;
-      botMessage.keyTerms = summaryResponse.data.key_terms;
+      botMessage.keyTerms = summaryResponse.data.key_terms || [];
       setChatMessages(prevMessages => [...prevMessages, botMessage]);
 
-      // Add Themes to Firestore
-      const themeDoc = {
-        Theme: newTheme,
-        Created_At: serverTimestamp(),
-        Definition: definition,
-        Relation: relation,
-        Key_Terms: key_terms,
-        Summary: summary,
-        Color: newColor,
-      };
-      const themeRef = await addDoc(collection(db, `Participants/${docId}/Themes`), themeDoc);
-      console.log('Theme added to Firestore');
+      // Log to console instead of Firebase
+      console.log('Theme (Firebase disabled):', {
+        theme: newTheme, 
+        definition, 
+        relation, 
+        key_terms, 
+        summary
+      });
+      
+      // Generate a temporary ID for the theme
+      const tempThemeId = 'theme-' + Date.now();
 
       // Add the theme and its instance to state or update if already exists
       setChapters((prevChapters) => {
-        // Find a chapter from the array of existing chapter 
-        // that is the same as the newly identified theme
+        // Find a chapter that matches the new theme
         const existingChapter = prevChapters.find((chapter) => chapter.theme === newTheme);
 
         if (existingChapter) {
           // Update the existing theme with new instance
-          const newInstanceIndex = Math.min(existingChapter.instances.length-1, colorScale.length-1);
-            // Use map to iterate through prevChapters and update the chapter that matches `newTheme`
-            // map returns a new array with the updated chapter
-            return prevChapters.map((chapter) => 
-              chapter.theme === newTheme ? {
-              ...chapter, // copy all properties while overriding the following:
-              instances: [...chapter.instances, botMessage.content],
-              currentInstance: newInstanceIndex,
-              color: colorScale[newInstanceIndex]
+          const newInstances = [...(existingChapter.instances || []), botMessage.content];
+          
+          // Combine existing and new key terms, removing duplicates
+          const combinedKeyTerms = [
+            ...(existingChapter.key_terms || []),
+            ...(key_terms || [])
+          ].filter((term, index, self) => 
+            term && self.indexOf(term) === index
+          );
+          
+          return prevChapters.map((chapter) => 
+            chapter.theme === newTheme ? {
+              ...chapter,
+              instances: newInstances,
+              key_terms: combinedKeyTerms,
+              currentInstance: newInstances.length - 1,
+              color: colorScale[Math.min(newInstances.length - 1, colorScale.length - 1)]
             } : chapter
-        );
-      } else {
-        // Add a new theme to the array of chapters
-        return [
+          );
+        } else {
+          // Add a new theme to the array of chapters
+          return [
             ...prevChapters,
             { 
               theme: newTheme,
-              id: themeRef.id,
-              definition,
-              relation,
-              key_terms,
-              summary,
+              id: tempThemeId,
+              definition: definition || '',
+              relation: relation || '',
+              key_terms: key_terms || [],
+              summary: summary || '',
               chapter_clicks: [],
               bookmark_clicks: [],
-              // track instance
               color: colorScale[0],
-              instances: [botMessage.content], // to track content and also for achoring the instance with its feedback message
-              currentInstance: 0, // current instance being displayed
+              instances: [botMessage.content],
+              currentInstance: 0,
             },
           ];
         }
       });
       
-      // debug log to check if chapters are added to instance 
+      // Log updated chapters
       setChapters((prevChapters) => {
-        const updatedChapters = prevChapters.map(chapter => {
-          return chapter;
-        });
-        console.log('Updated Chapters:', updatedChapters);
-        return updatedChapters;
+        console.log('Updated Chapters:', prevChapters);
+        return prevChapters;
       });
       
       setBookmarks(prevBookmarks => [
         ...prevBookmarks,
         { 
-          id: themeRef.id,
+          id: tempThemeId,
           messageIndex: chatMessages.length, 
           color: newColor 
         }
@@ -229,27 +240,99 @@ function Feedback() {
   };
 
   const highlightMessage = (message, keyTerms) => {
-    let highlightedMessage = message;
-  
-    keyTerms.forEach(term => {
-      const lowerMessage = highlightedMessage.toLowerCase();
-      const lowerTerm = term.toLowerCase();
-      const index = lowerMessage.indexOf(lowerTerm);
-  
-      if (index !== -1) {
-        const before = highlightedMessage.slice(0, index);
-        const match = highlightedMessage.slice(index, index + term.length);
-        const after = highlightedMessage.slice(index + term.length);
-        highlightedMessage = `${before}<span class="highlight">${match}</span>${after}`;
-
+    if (!message || !keyTerms || !Array.isArray(keyTerms) || keyTerms.length === 0) {
+      return message || '';
+    }
+    
+    try {
+      // First convert markdown to HTML
+      const htmlContent = md.render(message);
+      
+      // Create a temporary div to work with the message as HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+      
+      // Create a text node walker to process all text nodes in the message
+      const walker = document.createTreeWalker(
+        tempDiv,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+      
+      // Sort terms by length (descending) to prioritize longer matches
+      const sortedTerms = [...keyTerms]
+        .filter(term => term && typeof term === 'string')
+        .sort((a, b) => b.length - a.length);
+      
+      // Nodes to replace (we'll replace them after walking to avoid walker issues)
+      const replacements = [];
+      
+      // Find text nodes containing key terms
+      let textNode;
+      while ((textNode = walker.nextNode())) {
+        const text = textNode.nodeValue;
+        
+        for (const term of sortedTerms) {
+          // Use word boundaries for matching
+          const regex = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+          
+          let match;
+          let lastIndex = 0;
+          const fragments = [];
+          let hasMatch = false;
+          
+          while ((match = regex.exec(text)) !== null) {
+            hasMatch = true;
+            
+            // Add text before the match
+            if (match.index > lastIndex) {
+              fragments.push(document.createTextNode(text.substring(lastIndex, match.index)));
+            }
+            
+            // Create highlighted span for the match
+            const highlightSpan = document.createElement('span');
+            highlightSpan.className = 'highlight';
+            highlightSpan.textContent = match[0];
+            fragments.push(highlightSpan);
+            
+            lastIndex = match.index + match[0].length;
+          }
+          
+          // If we found matches, add the rest of the text and queue this node for replacement
+          if (hasMatch) {
+            if (lastIndex < text.length) {
+              fragments.push(document.createTextNode(text.substring(lastIndex)));
+            }
+            
+            replacements.push({ node: textNode, fragments });
+            break; // Process next text node
+          }
+        }
       }
-    });
-  
-    return highlightedMessage;
+      
+      // Replace the nodes
+      for (const { node, fragments } of replacements) {
+        const parent = node.parentNode;
+        if (parent) {
+          fragments.forEach(fragment => {
+            parent.insertBefore(fragment, node);
+          });
+          parent.removeChild(node);
+        }
+      }
+      
+      return tempDiv.innerHTML;
+    } catch (error) {
+      console.error("Error in highlighting:", error);
+      // If highlighting fails, at least render the markdown correctly
+      return md.render(message);
+    }
   };
   
-
   const scrollToBookmark = (messageIndex) => {
+    if (!chatContainerRef.current) return;
+    
     const chatMessages = chatContainerRef.current.children;
     if (chatMessages[messageIndex]) {
       chatMessages[messageIndex].scrollIntoView({ behavior: 'smooth' });
@@ -257,19 +340,18 @@ function Feedback() {
   };
 
   const clickLogger = async (themeId, type) => {
+    if (!themeId) return;
+    
     type += "_click";  
+
+    // Log click to console instead of updating Firebase
+    console.log(`Click logged (Firebase disabled) - ${type} on theme ${themeId}`);
 
     setChapters(prevSummaries => {
       return prevSummaries.map(theme => {
         if (theme.id === themeId) {
           const updatedClicks = [...(theme[type] || []), new Date().toLocaleString("en-US", { timeZone: "America/New_York" })];
-
-          // Update Firestore with the correct field name
-          updateDoc(doc(db, `Participants/${docId}/Themes/${themeId}`), {
-            [type]: updatedClicks  // Dynamically update chapter_click or bookmark_click in Firestore
-          });
-
-          return { ...theme, [type]: updatedClicks };  // Dynamically update the state
+          return { ...theme, [type]: updatedClicks };
         }
         return theme;
       });
@@ -277,48 +359,60 @@ function Feedback() {
   };
 
   const toggleSeeMore = (themeId, section) => {
+    if (!themeId) return;
+    
     setExpandedSections(prev => ({
       ...prev,
       [themeId]: {
-        ...prev[themeId],
-        [section]: !prev[themeId]?.[section]
+        ...(prev[themeId] || {}),
+        [section]: !(prev[themeId]?.[section])
       }
     })); 
   };
 
-  // Logic for navigation arrows
+  // Improved navigation arrows function
   const handleInstanceNavigation = (theme, direction) => {
+    if (!theme) return;
+    
     setChapters(prevChapters => 
       prevChapters.map(item => {
-        if (item.them === theme) {
-          // update instance index, min 0 and max colorScale.length-1
-          const newInstance = Math.max(0, Math.min(item.instances.length-1, item.currentInstance + direction));
-        return {
-          ...item,
-          currentInstance: newInstance
-        };
-      }
-      return item;
+        if (item.theme === theme) {
+          // Safely get instances array and current index
+          const instances = item.instances || [];
+          const currentInstance = item.currentInstance || 0;
+          
+          // Calculate new instance index with proper bounds
+          const newInstance = Math.max(0, Math.min(instances.length - 1, currentInstance + direction));
+          
+          console.log(`Navigating ${theme} from instance ${currentInstance} to ${newInstance} of ${instances.length}`);
+          
+          return {
+            ...item,
+            currentInstance: newInstance
+          };
+        }
+        return item;
       })
     );
   };
 
-
   return (
     <div className="feedback-container">
       <div className="image-container">
-        <img src={`http://localhost:8000${imageUrl}`} alt="Uploaded design" />
+        {imageUrl && <img src={`http://localhost:8000${imageUrl}`} alt="Uploaded design" />}
       </div>
       <div className="feedback-chat-container">
         <div className="teaser-chapters">
-          {teaserChapters.map((theme, index) => (
+          {(teaserChapters || []).map((theme, index) => (
             <button
               key={index}
               className="teaser-chapter"
               onClick={() => {
                 const chapterIndex = chapters.findIndex(s => s.theme === theme);
-                setActiveTheme(chapterIndex);
-                clickLogger(chapters[chapterIndex].id, "chapter");
+                if (chapterIndex !== -1) {
+                  setActiveTheme(chapterIndex);
+                  clickLogger(chapters[chapterIndex].id, "chapter");
+                }
               }}
             >
               {theme}
@@ -326,7 +420,7 @@ function Feedback() {
           ))}
         </div>
         <div className="bookmarks">
-          {bookmarks.map((bookmark, index) => (
+          {(bookmarks || []).map((bookmark, index) => (
             <div 
               key={index} 
               className="bookmark"
@@ -339,20 +433,48 @@ function Feedback() {
           ))}
         </div>
         <div className="chat-container" ref={chatContainerRef}>
-          {chatMessages.map((msg, index) => (
-            <div
-              key={index} 
-              className={`message ${msg.is_user ? 'user-message' : 'bot-message'}`}
+          {(chatMessages || []).map((msg, index) => {
+            // For each message, find if any theme's key terms should be highlighted
+            let termsToHighlight = [];
+            
+            if (!msg.is_user) {
+              // Collect all key terms from all themes that might apply to this message
+              chapters.forEach(chapter => {
+                if (chapter.key_terms && Array.isArray(chapter.key_terms)) {
+                  // Check if this message is an instance of this theme
+                  const isInstanceOfTheme = chapter.instances && 
+                    chapter.instances.some(instance => instance === msg.content);
+                  
+                  if (isInstanceOfTheme) {
+                    termsToHighlight = [...termsToHighlight, ...chapter.key_terms];
+                  }
+                }
+              });
+              
+              // If this message has keyTerms attached (from the API), add those too
+              if (msg.keyTerms && Array.isArray(msg.keyTerms)) {
+                termsToHighlight = [...termsToHighlight, ...msg.keyTerms];
+              }
+              
+              // Remove duplicates
+              termsToHighlight = [...new Set(termsToHighlight)];
+            }
+
+            return (
+              <div
+                key={index} 
+                className={`message ${msg.is_user ? 'user-message' : 'bot-message'}`}
               >
-              {msg.is_user ? (
-                <div>{msg.content}</div>
-              ) : (msg.keyTerms && Array.isArray(msg.keyTerms) && msg.keyTerms.length > 0) ? (
-                <div dangerouslySetInnerHTML={{ __html: highlightMessage(msg.content, msg.keyTerms) }} />
-              ) : (
-                <div>{msg.content}</div>
-              )}
-            </div>
-          ))}
+                {msg.is_user ? (
+                  <div>{msg.content}</div>
+                ) : (
+                  <div dangerouslySetInnerHTML={{ 
+                    __html: highlightMessage(msg.content, termsToHighlight) 
+                  }} />
+                )}
+              </div>
+            );
+          })}
         </div>
         <form onSubmit={handleSubmit} className="chat-input-form">
           <input
@@ -371,6 +493,8 @@ function Feedback() {
                 className="suggestion-button"
                 onClick={() => {
                   setNewMessage(suggestion);
+                  // Focus on the input field after selection
+                  document.querySelector('.chat-input-form input').focus();
                 }}
               >
                 {suggestion}
@@ -381,7 +505,7 @@ function Feedback() {
       </div>
       <div className="accordion-container">
         <h3>Theme Summaries</h3>
-        {chapters.map((item, index) => (
+        {(chapters || []).map((item, index) => (
           <div
             key={index}
             className={`accordion-item ${activeTheme === index ? 'active' : ''}`}
@@ -394,15 +518,15 @@ function Feedback() {
               }}
               style={{ backgroundColor: item.color }}
             >
-              {item.theme}
+              {item.theme || 'Unnamed Theme'}
             </button>
             {activeTheme === index && (
               <div className="accordion-content">
                 <h4>Definition</h4>
                 <p>
                   {expandedSections[item.id]?.definition
-                    ? item.definition
-                    : `${item.definition.slice(0, 100)}...`}
+                    ? (item.definition || 'No definition available')
+                    : `${(item.definition || 'No definition available').slice(0, 100)}...`}
                   <button onClick={() => toggleSeeMore(item.id, 'definition')} className="see-more">
                     {expandedSections[item.id]?.definition ? 'See less' : 'See more'}
                   </button>
@@ -410,40 +534,65 @@ function Feedback() {
                 <h4>Relation to Design</h4>
                 <p>
                   {expandedSections[item.id]?.relation
-                    ? item.relation
-                    : `${item.relation.slice(0, 100)}...`}
+                    ? (item.relation || 'No relation information available')
+                    : `${(item.relation || 'No relation information available').slice(0, 100)}...`}
                   <button onClick={() => toggleSeeMore(item.id, 'relation')} className="see-more">
                     {expandedSections[item.id]?.relation ? 'See less' : 'See more'}
                   </button>
                 </p>
                 <h4>Key Terms</h4>
-                <p>{item.key_terms.join(', ')}</p>
-                {/* Instance Navigation */}
-                <div className="instance-navigation">
-                    <span>
-                      Instance {item.currentInstance + 1}
-                    </span>
-                    <button 
-                      className="nav-arrow"
-                      onClick={() => handleInstanceNavigation(item.theme, -1)}
-                      disabled={item.currentInstance === 0} // disable if at the first instance
-                      > ← </button>
-                    <button
-                      className="nav-arrow"
-                      onClick={() => handleInstanceNavigation(item.theme, 1)}
-                      disabled={item.currentInstance === item.instances.length-1} // disable if at the last instance
-                      > → </button>
-                </div>
-
-                {/*<h4>Summary</h4>
                 <p>
-                  {expandedSections[item.id]?.summary
-                    ? item.summary
-                    : `${item.summary.slice(0, 100)}...`}
-                  <button onClick={() => toggleSeeMore(item.id, 'summary')} className="see-more">
-                    {expandedSections[item.id]?.summary ? 'See less' : 'See more'}
-                  </button>
-                </p>*/}
+                  {(item.key_terms || []).map((term, i) => {
+                    // Check if this term appears in the current instance
+                    const currentInstance = item.instances[item.currentInstance || 0] || '';
+                    const termRegex = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+                    const isInCurrentInstance = termRegex.test(currentInstance);
+                    
+                    return (
+                      <span 
+                        key={i} 
+                        className={`key-term ${isInCurrentInstance ? 'active-term' : ''}`}
+                      >
+                        {term}{i < (item.key_terms.length - 1) ? ', ' : ''}
+                      </span>
+                    );
+                  })}
+                </p>
+                
+                {/* Display current instance excerpt */}
+                {item.instances && item.instances.length > 0 && (
+                  <>
+                    <h4>Excerpt</h4>
+                    <div className="instance-excerpt">
+                      <p>
+                        {item.instances[item.currentInstance || 0].length > 150 
+                          ? `${item.instances[item.currentInstance || 0].slice(0, 150)}...` 
+                          : item.instances[item.currentInstance || 0]}
+                      </p>
+                    </div>
+                  </>
+                )}
+                
+                {/* Instance Navigation */}
+                {item.instances && item.instances.length > 1 && (
+                  <div className="instance-navigation">
+                    <span>
+                      Instance {(item.currentInstance || 0) + 1} of {item.instances.length}
+                    </span>
+                    <div>
+                      <button 
+                        className="nav-arrow"
+                        onClick={() => handleInstanceNavigation(item.theme, -1)}
+                        disabled={(item.currentInstance || 0) === 0} // disable if at first instance
+                      > ← </button>
+                      <button
+                        className="nav-arrow"
+                        onClick={() => handleInstanceNavigation(item.theme, 1)}
+                        disabled={(item.currentInstance || 0) >= ((item.instances || []).length - 1)} // disable if at last instance
+                      > → </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

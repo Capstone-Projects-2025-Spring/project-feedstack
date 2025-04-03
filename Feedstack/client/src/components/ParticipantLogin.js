@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import  { addParticipant } from '../firestore';
-import { logTestEvent, logErrorEvent } from '../firebaseAnalytics'
+// Comment out Firebase imports
+// import { addParticipant } from '../firestore';
+// import { logTestEvent, logErrorEvent } from '../firebaseAnalytics'
 
 function ParticipantLogin() {
   const [participantId, setParticipantId] = useState('');
@@ -14,24 +15,22 @@ function ParticipantLogin() {
       alert('Please enter a Participant ID');
       return;
     }
+    
     try {
-        // Create participant in Firestore
-        const docId = await addParticipant({
-        ParticipantId: participantId,
-        // No design, chatlogs, and themes on login
-        Design: '',
-        ChatLogs: [],
-        Themes: []
-      });
-
-      await axios.post('http://localhost:8000/api/participant/', { participant_id: participantId });
-      navigate('/upload', { state: { participantId, docId } });
-
-      logTestEvent(participantId);
+      // Skip Firestore operations
+      // const docId = await addParticipant({...});
+      const docId = 'temp-doc-id'; // Use a temporary ID
       
+      // Still call your API to maintain backend state
+      await axios.post('http://localhost:8000/api/participant/', { participant_id: participantId });
+      
+      // Log to console instead of Firebase
+      console.log('Participant login event logged (Firebase disabled):', participantId);
+      
+      navigate('/upload', { state: { participantId, docId } });
     } catch (error) {
       console.error('Error creating participant:', error);
-      logErrorEvent(error.message, error.response?.data?.error || 'Unknown error');
+      console.log('Error event logged (Firebase disabled):', error.message);
       alert('Error: ' + (error.response?.data?.error || 'An unknown error occurred'));
     }
   };
