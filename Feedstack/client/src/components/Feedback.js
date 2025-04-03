@@ -123,21 +123,41 @@ function Feedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-
+  
     const userMessage = { content: newMessage, is_user: true };
     setChatMessages(prevMessages => [...prevMessages, userMessage]);
     setNewMessage('');
-
+  
     try {
       // Log to console instead of Firebase
       console.log('User message (Firebase disabled):', userMessage.content);
-
+  
+      // Find the initial feedback about the design to maintain context
+      const initialFeedback = chatMessages.length > 0 && !chatMessages[0].is_user 
+        ? chatMessages[0].content 
+        : feedback;
+  
+      // Create a conversation history that maintains context but in a more natural way
+      const contextualHistory = [
+        // Add a subtle system message that keeps the context without being too formal
+        {
+          role: "system",
+          content: "Remember you're discussing a specific design that was uploaded. Keep your responses natural and conversational - like a friendly design expert having a casual chat."
+        },
+        // Then include the conversation history
+        ...chatMessages.map(msg => ({
+          role: msg.is_user ? "user" : "assistant",
+          content: msg.content
+        }))
+      ];
+  
       const response = await axios.post('http://localhost:8000/api/chat/', {
         participant_id: participantId,
         message: newMessage,
-        conversation_history: chatMessages
+        conversation_history: contextualHistory
       });
-      
+  
+      // Rest of the function stays the same...
       const botMessage = response.data.bot_message;
       
       // Log to console instead of Firebase
@@ -241,20 +261,30 @@ function Feedback() {
     }
   };
 
+  // Simplified highlighting approach using string replacement
   const highlightMessage = (message, keyTerms) => {
     if (!message || !keyTerms || !Array.isArray(keyTerms) || keyTerms.length === 0) {
-      return message || '';
+      return md.render(message || '');
     }
     
     try {
-      // First convert markdown to HTML
+      // First render markdown to HTML
       const htmlContent = md.render(message);
       
-      // Create a temporary div to work with the message as HTML
+      // Simple string-based approach for highlighting
+      let highlightedContent = htmlContent;
+      
+      // Sort terms by length (descending) to prioritize longer matches
+      const sortedTerms = [...keyTerms]
+        .filter(term => term && typeof term === 'string' && term.trim().length > 0)
+        .sort((a, b) => b.length - a.length);
+      
+      // Create a temporary container to parse the HTML
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = htmlContent;
       
-      // Create a text node walker to process all text nodes in the message
+      // Get all text nodes
+      const textNodes = [];
       const walker = document.createTreeWalker(
         tempDiv,
         NodeFilter.SHOW_TEXT,
@@ -262,65 +292,71 @@ function Feedback() {
         false
       );
       
-      // Sort terms by length (descending) to prioritize longer matches
-      const sortedTerms = [...keyTerms]
-        .filter(term => term && typeof term === 'string')
-        .sort((a, b) => b.length - a.length);
-      
-      // Nodes to replace (we'll replace them after walking to avoid walker issues)
-      const replacements = [];
-      
-      // Find text nodes containing key terms
-      let textNode;
-      while ((textNode = walker.nextNode())) {
-        const text = textNode.nodeValue;
-        
-        for (const term of sortedTerms) {
-          // Use word boundaries for matching
-          const regex = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-          
-          let match;
-          let lastIndex = 0;
-          const fragments = [];
-          let hasMatch = false;
-          
-          while ((match = regex.exec(text)) !== null) {
-            hasMatch = true;
-            
-            // Add text before the match
-            if (match.index > lastIndex) {
-              fragments.push(document.createTextNode(text.substring(lastIndex, match.index)));
-            }
-            
-            // Create highlighted span for the match
-            const highlightSpan = document.createElement('span');
-            highlightSpan.className = 'highlight';
-            highlightSpan.textContent = match[0];
-            fragments.push(highlightSpan);
-            
-            lastIndex = match.index + match[0].length;
-          }
-          
-          // If we found matches, add the rest of the text and queue this node for replacement
-          if (hasMatch) {
-            if (lastIndex < text.length) {
-              fragments.push(document.createTextNode(text.substring(lastIndex)));
-            }
-            
-            replacements.push({ node: textNode, fragments });
-            break; // Process next text node
-          }
-        }
+      let node;
+      while (node = walker.nextNode()) {
+        textNodes.push(node);
       }
       
-      // Replace the nodes
-      for (const { node, fragments } of replacements) {
-        const parent = node.parentNode;
-        if (parent) {
-          fragments.forEach(fragment => {
-            parent.insertBefore(fragment, node);
-          });
-          parent.removeChild(node);
+      // For each text node, highlight the terms
+      for (const textNode of textNodes) {
+        if (!textNode.nodeValue.trim()) continue;
+        
+        let nodeContent = textNode.nodeValue;
+        let replacements = [];
+        
+        for (const term of sortedTerms) {
+          // Use a regular expression to find the term with word boundaries
+          const regex = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+          
+          // Find all matches
+          let match;
+          while ((match = regex.exec(nodeContent)) !== null) {
+            replacements.push({
+              start: match.index,
+              end: match.index + match[0].length,
+              text: match[0],
+              term
+            });
+          }
+        }
+        
+        // Sort replacements by position
+        replacements.sort((a, b) => a.start - b.start);
+        
+        // Remove overlapping replacements
+        for (let i = replacements.length - 1; i > 0; i--) {
+          if (replacements[i].start < replacements[i-1].end) {
+            replacements.splice(i, 1);
+          }
+        }
+        
+        // Apply replacements from end to start to avoid position shifting
+        if (replacements.length > 0) {
+          const fragment = document.createDocumentFragment();
+          let lastIndex = 0;
+          
+          for (const { start, end, text } of replacements) {
+            // Text before the highlight
+            if (start > lastIndex) {
+              fragment.appendChild(document.createTextNode(nodeContent.substring(lastIndex, start)));
+            }
+            
+            // Highlighted text
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.textContent = text;
+            fragment.appendChild(span);
+            
+            lastIndex = end;
+          }
+          
+          // Remaining text
+          if (lastIndex < nodeContent.length) {
+            fragment.appendChild(document.createTextNode(nodeContent.substring(lastIndex)));
+          }
+          
+          // Replace the text node with our fragment
+          textNode.parentNode.replaceChild(fragment, textNode);
         }
       }
       
@@ -476,26 +512,20 @@ function Feedback() {
             let termsToHighlight = [];
             
             if (!msg.is_user) {
-              // Collect all key terms from all themes that might apply to this message
+              // Get ALL key terms from ALL themes to improve highlighting coverage
               chapters.forEach(chapter => {
                 if (chapter.key_terms && Array.isArray(chapter.key_terms)) {
-                  // Check if this message is an instance of this theme
-                  const isInstanceOfTheme = chapter.instances && 
-                    chapter.instances.some(instance => instance === msg.content);
-                  
-                  if (isInstanceOfTheme) {
-                    termsToHighlight = [...termsToHighlight, ...chapter.key_terms];
-                  }
+                  termsToHighlight.push(...chapter.key_terms);
                 }
               });
               
               // If this message has keyTerms attached (from the API), add those too
               if (msg.keyTerms && Array.isArray(msg.keyTerms)) {
-                termsToHighlight = [...termsToHighlight, ...msg.keyTerms];
+                termsToHighlight.push(...msg.keyTerms);
               }
               
-              // Remove duplicates
-              termsToHighlight = [...new Set(termsToHighlight)];
+              // Remove duplicates and empty terms
+              termsToHighlight = [...new Set(termsToHighlight)].filter(term => term && term.trim().length > 0);
             }
 
             return (
