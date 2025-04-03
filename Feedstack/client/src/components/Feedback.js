@@ -37,10 +37,12 @@ function Feedback() {
   const [expandedSections, setExpandedSections] = useState({});
   const [teaserChapters, setTeaserChapters] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  const [scrubPosition, setScrubPosition] = useState(0);
   const location = useLocation();
   const { feedback, participantId, imageUrl, docId } = location.state || 
     { feedback: 'No feedback available', participantId: 'temp-user', imageUrl: '', docId: 'temp-doc' };
   const chatContainerRef = useRef(null);
+  const scrubTrackRef = useRef(null);
   const audioRef = useRef(new Audio(popSound));
 
   useEffect(() => {
@@ -396,6 +398,41 @@ function Feedback() {
     );
   };
 
+  // Function to navigate to a specific message and expand the corresponding theme
+  const navigateToThemeMessage = (messageIndex, themeId) => {
+    // Scroll to message
+    scrollToBookmark(messageIndex);
+    
+    // Find and expand the corresponding theme in accordion
+    const themeIndex = chapters.findIndex(chapter => chapter.id === themeId);
+    if (themeIndex !== -1) {
+      setActiveTheme(themeIndex);
+      clickLogger(themeId, "scrubbar");
+    }
+  };
+
+  // Handle scrub drag
+  const handleScrubDrag = (e) => {
+    if (!scrubTrackRef.current || e.clientX === 0) return;
+    
+    const trackRect = scrubTrackRef.current.getBoundingClientRect();
+    const position = Math.max(0, Math.min(1, (e.clientX - trackRect.left) / trackRect.width));
+    
+    // Update scrub position
+    setScrubPosition(position);
+    
+    // Calculate which message to show based on position
+    const messageIndex = Math.min(
+      Math.floor(position * chatMessages.length),
+      chatMessages.length - 1
+    );
+    
+    if (messageIndex >= 0) {
+      // Scroll to that message
+      scrollToBookmark(messageIndex);
+    }
+  };
+
   return (
     <div className="feedback-container">
       <div className="image-container">
@@ -419,6 +456,7 @@ function Feedback() {
             </button>
           ))}
         </div>
+        
         <div className="bookmarks">
           {(bookmarks || []).map((bookmark, index) => (
             <div 
@@ -476,6 +514,48 @@ function Feedback() {
             );
           })}
         </div>
+        
+        {/* Timeline Scrub Bar - now positioned above the input field */}
+        <div className="timeline-scrubbar">
+          <div className="timeline-track" ref={scrubTrackRef}>
+            {/* Create markers for each bookmark/theme point */}
+            {bookmarks.map((bookmark, index) => (
+              <div 
+                key={index}
+                className="timeline-marker"
+                style={{ 
+                  backgroundColor: bookmark.color,
+                  left: `${(bookmark.messageIndex / Math.max(chatMessages.length - 1, 1)) * 100}%` 
+                }}
+                onClick={() => navigateToThemeMessage(bookmark.messageIndex, bookmark.id)}
+              >
+                <div className="timeline-tooltip">
+                  {/* Find theme name from bookmark id */}
+                  {chapters.find(chapter => chapter.id === bookmark.id)?.theme || 'Unknown Theme'}
+                  <div className="tooltip-excerpt">
+                    {chatMessages[bookmark.messageIndex]?.content.slice(0, 60)}...
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Scrub handle */}
+            <div 
+              className="scrub-handle"
+              style={{ left: `${scrubPosition * 100}%` }}
+              draggable="true"
+              onDragStart={(e) => {
+                e.dataTransfer.setData('text/plain', '');
+                e.currentTarget.classList.add('dragging');
+              }}
+              onDrag={handleScrubDrag}
+              onDragEnd={(e) => {
+                e.currentTarget.classList.remove('dragging');
+              }}
+            />
+          </div>
+        </div>
+        
         <form onSubmit={handleSubmit} className="chat-input-form">
           <input
             type="text"
