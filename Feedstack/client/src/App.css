@@ -526,3 +526,137 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+/* Add these new styles to your App.css */
+
+.instance-excerpt {
+  background-color: #f9f9f9;
+  border-left: 3px solid #4CAF50;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}
+.instance-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.instance-navigation .nav-arrow {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 0 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.instance-navigation .nav-arrow:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.instance-navigation .nav-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.key-term {
+  transition: all 0.2s ease;
+}
+
+.key-term.active-term {
+  font-weight: bold;
+  color: #4CAF50;
+}
+/* Timeline Scrub Bar Styles - Repositioned above input field */
+.timeline-scrubbar {
+  width: 100%;
+  padding: 10px 0 5px;
+  position: relative;
+  margin-top: auto; /* Push to bottom of the chat container */
+  background-color: transparent;
+}
+
+.timeline-track {
+  height: 4px; /* Slightly smaller height */
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  position: relative;
+  margin: 0 15px; /* Match input field padding */
+}
+
+.timeline-marker {
+  width: 10px; /* Slightly smaller markers */
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.timeline-marker:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  z-index: 3;
+}
+
+.timeline-tooltip {
+  position: absolute;
+  bottom: 15px; /* Adjusted for new position */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  min-width: 120px;
+  text-align: center;
+}
+
+.tooltip-excerpt {
+  font-weight: normal;
+  font-size: 11px;
+  margin-top: 4px;
+  white-space: normal;
+  max-width: 200px;
+  color: #666;
+}
+
+.timeline-marker:hover .timeline-tooltip {
+  opacity: 1;
+  visibility: visible;
+  bottom: 20px;
+}
+
+.scrub-handle {
+  width: 14px; /* Slightly smaller handle */
+  height: 14px;
+  background-color: white;
+  border: 2px solid #4CAF50;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  z-index: 4;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.scrub-handle.dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.2);
+  background-color: #e8f5e9;
+}

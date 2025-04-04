@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { db } from '../firebase';
-import { doc, updateDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
-
+// Comment out Firebase imports
+// import { db } from '../firebase';
+// import { doc, updateDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
 
 function DesignUpload() {
   const [file, setFile] = useState(null);
@@ -11,8 +11,8 @@ function DesignUpload() {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const participantId = location.state?.participantId;
-  const docId = location.state?.docId;
+  const participantId = location.state?.participantId || 'temp-user'; // Provide fallback
+  const docId = location.state?.docId || 'temp-doc-id'; // Provide fallback
 
   useEffect(() => {
     if (!participantId) {
@@ -47,19 +47,22 @@ function DesignUpload() {
       });
 
       if (response.data && response.data.feedback) {
-        // Update Firestore with design URL
+        // Comment out Firestore operations
+        /*
         const participantDoc = doc(db, 'Participants', docId);
         await updateDoc(participantDoc, {
           Design: response.data.image_url,
           Uploaded_At: serverTimestamp()
         });
-        // Add initial feedback to Firestore
         await addDoc(collection(db, `Participants/${docId}/ChatLogs`),
           {
             Message: response.data.feedback,
             Timestamp: serverTimestamp(),
             Sender: "Feedstack"
           });
+        */
+        
+        console.log('Firebase operations bypassed for testing');
 
         navigate('/feedback', {
           state: {
