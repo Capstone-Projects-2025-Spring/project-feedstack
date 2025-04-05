@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// Comment out Firebase imports
-// import { db } from '../firebase';
-// import { doc, updateDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
+import API_URL from '../config';
 
 function DesignUpload() {
   const [file, setFile] = useState(null);
@@ -11,8 +9,8 @@ function DesignUpload() {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const participantId = location.state?.participantId || 'temp-user'; // Provide fallback
-  const docId = location.state?.docId || 'temp-doc-id'; // Provide fallback
+  const participantId = location.state?.participantId || 'temp-user';
+  const docId = location.state?.docId || 'temp-doc-id';
 
   useEffect(() => {
     if (!participantId) {
@@ -41,27 +39,13 @@ function DesignUpload() {
 
     try {
       const base64Image = await convertToBase64(file);
-      const response = await axios.post('http://localhost:8000/api/upload/', {
+      const response = await axios.post(`${API_URL}/upload/`, {
         image: base64Image,
         participant: participantId
       });
 
       if (response.data && response.data.feedback) {
-        // Comment out Firestore operations
-        /*
-        const participantDoc = doc(db, 'Participants', docId);
-        await updateDoc(participantDoc, {
-          Design: response.data.image_url,
-          Uploaded_At: serverTimestamp()
-        });
-        await addDoc(collection(db, `Participants/${docId}/ChatLogs`),
-          {
-            Message: response.data.feedback,
-            Timestamp: serverTimestamp(),
-            Sender: "Feedstack"
-          });
-        */
-        
+        // Firebase operations disabled
         console.log('Firebase operations bypassed for testing');
 
         navigate('/feedback', {

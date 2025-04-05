@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// Comment out Firebase imports
-// import { addParticipant } from '../firestore';
-// import { logTestEvent, logErrorEvent } from '../firebaseAnalytics'
+import API_URL from '../config';
 
 function ParticipantLogin() {
   const [participantId, setParticipantId] = useState('');
@@ -15,14 +13,12 @@ function ParticipantLogin() {
       alert('Please enter a Participant ID');
       return;
     }
-    
     try {
       // Skip Firestore operations
-      // const docId = await addParticipant({...});
       const docId = 'temp-doc-id'; // Use a temporary ID
       
       // Still call your API to maintain backend state
-      await axios.post('http://localhost:8000/api/participant/', { participant_id: participantId });
+      await axios.post(`${API_URL}/participant/`, { participant_id: participantId });
       
       // Log to console instead of Firebase
       console.log('Participant login event logged (Firebase disabled):', participantId);

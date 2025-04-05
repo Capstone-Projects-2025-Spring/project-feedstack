@@ -10,4 +10,5 @@ urlpatterns = [
     path('summarize/', SummarizeView.as_view(), name='summarize'),
     path('generate-suggestions/', GenerateSuggestionsView.as_view(), name='generate-suggestions'),
     # path('highlight-terms/', HighlightTermsView.as_view(), name='highlight_terms'),
+    
 ]
