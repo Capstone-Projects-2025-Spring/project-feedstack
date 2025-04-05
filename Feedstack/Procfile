@@ -1,0 +1,1 @@
+web: gunicorn feedstack_project.wsgi

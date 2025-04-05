@@ -3,9 +3,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import MarkdownIt from 'markdown-it';
 import popSound from '../assets/pop.mp3';
-// Comment out Firebase imports
-// import { db } from '../firebase';
-// import { collection, addDoc, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
+import API_URL from '../config';
 
 const md = new MarkdownIt({
   html: false,  // Disable HTML tags in source
@@ -64,7 +62,7 @@ function Feedback() {
 
   const generateInitialSummary = async (feedback) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/summarize/', {
+      const response = await axios.post(`${API_URL}/summarize/`, {
         text: feedback,
         theme: 'Initial Feedback'
       });
@@ -101,7 +99,7 @@ function Feedback() {
 
   const generateSuggestions = async (lastMessage) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/generate-suggestions/', {
+      const response = await axios.post(`${API_URL}/generate-suggestions/`, {
         message: lastMessage
       });
       setSuggestions(response.data.suggestions || []);
@@ -123,26 +121,26 @@ function Feedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-  
+
     const userMessage = { content: newMessage, is_user: true };
     setChatMessages(prevMessages => [...prevMessages, userMessage]);
     setNewMessage('');
-  
+
     try {
       // Log to console instead of Firebase
       console.log('User message (Firebase disabled):', userMessage.content);
-  
+
       // Find the initial feedback about the design to maintain context
       const initialFeedback = chatMessages.length > 0 && !chatMessages[0].is_user 
         ? chatMessages[0].content 
         : feedback;
-  
-      // Create a conversation history that maintains context but in a more natural way
+
+      // Create a conversation history that always includes a reminder about the design
       const contextualHistory = [
-        // Add a subtle system message that keeps the context without being too formal
+        // First, add a system message reminding about the design context
         {
           role: "system",
-          content: "Remember you're discussing a specific design that was uploaded. Keep your responses natural and conversational - like a friendly design expert having a casual chat."
+          content: "Remember you're discussing a specific design that was uploaded. Keep your responses natural and conversational - like a friendly design expert having a casual chat. DO NOT use numbered lists or bullet points."
         },
         // Then include the conversation history
         ...chatMessages.map(msg => ({
@@ -150,27 +148,26 @@ function Feedback() {
           content: msg.content
         }))
       ];
-  
-      const response = await axios.post('http://localhost:8000/api/chat/', {
+
+      const response = await axios.post(`${API_URL}/chat/`, {
         participant_id: participantId,
         message: newMessage,
         conversation_history: contextualHistory
       });
-  
-      // Rest of the function stays the same...
+      
       const botMessage = response.data.bot_message;
       
       // Log to console instead of Firebase
       console.log('Bot message (Firebase disabled):', botMessage.content);
       
-      const themeResponse = await axios.post('http://localhost:8000/api/identify-theme/', {
+      const themeResponse = await axios.post(`${API_URL}/identify-theme/`, {
         message: botMessage.content,
       });
       
       const newTheme = themeResponse.data.theme;
       const newColor = themeColors[chapters.length % themeColors.length];
       
-      const summaryResponse = await axios.post('http://localhost:8000/api/summarize/', {
+      const summaryResponse = await axios.post(`${API_URL}/summarize/`, {
         message: botMessage.content,
         theme: newTheme
       });
@@ -472,7 +469,7 @@ function Feedback() {
   return (
     <div className="feedback-container">
       <div className="image-container">
-        {imageUrl && <img src={`http://localhost:8000${imageUrl}`} alt="Uploaded design" />}
+        {imageUrl && <img src={`${API_URL.replace('/api', '')}${imageUrl}`} alt="Uploaded design" />}
       </div>
       <div className="feedback-chat-container">
         <div className="teaser-chapters">
@@ -545,7 +542,7 @@ function Feedback() {
           })}
         </div>
         
-        {/* Timeline Scrub Bar - now positioned above the input field */}
+        {/* Timeline Scrub Bar - positioned above the input field */}
         <div className="timeline-scrubbar">
           <div className="timeline-track" ref={scrubTrackRef}>
             {/* Create markers for each bookmark/theme point */}
