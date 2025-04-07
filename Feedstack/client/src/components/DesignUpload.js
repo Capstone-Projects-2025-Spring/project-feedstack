@@ -32,7 +32,7 @@ function DesignUpload() {
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // This creates properly formatted data:image/type;base64,
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
@@ -71,7 +71,7 @@ function DesignUpload() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Error response:", errorText);
-        throw new Error(`Server error: ${response.status}`);
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();

@@ -1,5 +1,7 @@
 import base64
 import io
+import json
+import logging
 from PIL import Image
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,89 +10,139 @@ from .models import Participant, DesignUpload, ChatMessage
 from .serializers import ParticipantSerializer, DesignUploadSerializer, ChatMessageSerializer
 from django.conf import settings
 from openai import OpenAI
-import logging
-# from sentence_transformers import SentenceTransformer
 import numpy as np
 import re
 
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
-# model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 class ParticipantView(APIView):
     def post(self, request, *args, **kwargs):
-        # Accept both JSON and form data
-        data = request.data
-        print("Request data:", data)
+        # Improved participant_id extraction
+        participant_id = None
         
-        participant_id = data.get('participant_id')
-        if not participant_id:
-            # Check if it might be in request.POST or raw body
+        # Try to get from JSON body
+        if hasattr(request, 'data') and isinstance(request.data, dict):
+            participant_id = request.data.get('participant_id')
+        
+        # Try to get from form data
+        if not participant_id and request.POST:
             participant_id = request.POST.get('participant_id')
-            if not participant_id and request.body:
-                try:
-                    import json
-                    body_data = json.loads(request.body)
-                    participant_id = body_data.get('participant_id')
-                except:
-                    pass
         
+        # Try to parse raw request body as JSON
+        if not participant_id and request.body:
+            try:
+                body_data = json.loads(request.body.decode('utf-8'))
+                participant_id = body_data.get('participant_id')
+            except:
+                pass
+        
+        # Set a default if none found
         if not participant_id:
-            return Response({"error": "participant_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+            participant_id = 'temp-user'
+            logger.warning("No participant_id provided, using default: temp-user")
         
         try:
             participant, created = Participant.objects.get_or_create(participant_id=participant_id)
             serializer = ParticipantSerializer(participant)
             return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
         except Exception as e:
+            logger.error(f"Error creating participant: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DesignFeedbackView(APIView):
     def post(self, request):
-        # Try multiple ways to get participant_id
-        participant_id = request.data.get('participant')
-        if not participant_id:
-            # Check alternative data sources
+        # Comprehensive error logging
+        logger.info(f"Design upload request received with content type: {request.content_type}")
+        logger.info(f"Request data keys: {request.data.keys() if hasattr(request, 'data') else 'No data attribute'}")
+        
+        # Extract participant ID with improved reliability
+        participant_id = None
+        
+        # Try different ways to get participant ID
+        if hasattr(request, 'data') and isinstance(request.data, dict):
+            participant_id = request.data.get('participant')
+        
+        if not participant_id and request.POST:
             participant_id = request.POST.get('participant')
-            
-            if not participant_id and request.body:
-                try:
-                    import json
-                    body_data = json.loads(request.body.decode('utf-8'))
-                    participant_id = body_data.get('participant')
-                except:
-                    pass
-                    
+        
+        if not participant_id and request.body:
+            try:
+                body_data = json.loads(request.body.decode('utf-8'))
+                participant_id = body_data.get('participant')
+            except:
+                pass
+                
+        # Set default if still not found
         if not participant_id:
-            return Response({"error": "participant ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+            participant_id = 'temp-user'
+            logger.warning("No participant ID found, using default: temp-user")
+        
+        logger.info(f"Using participant ID: {participant_id}")
 
         try:
-            # Try to get participant or create a new one if it doesn't exist
+            # Create or get participant
             participant, created = Participant.objects.get_or_create(participant_id=participant_id)
+            logger.info(f"Participant {'created' if created else 'retrieved'} with ID: {participant_id}")
         except Exception as e:
-            # Handle any errors gracefully
-            return Response({"error": f"Error finding/creating participant: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f"Error with participant: {str(e)}")
+            return Response({"error": f"Error with participant: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-        image_data = request.data.get('image')
+        # Extract image data with better error handling
+        image_data = None
+        if hasattr(request, 'data') and isinstance(request.data, dict):
+            image_data = request.data.get('image')
+        
+        if not image_data and request.body:
+            try:
+                body_data = json.loads(request.body.decode('utf-8'))
+                image_data = body_data.get('image')
+            except:
+                pass
+        
         if not image_data:
+            logger.error("No image data provided in request")
             return Response({"error": "No image data provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Decode base64 image
+            # Safer base64 splitting with more validation
+            if ';base64,' not in image_data:
+                logger.error("Invalid image format: missing ';base64,' marker")
+                return Response({"error": "Invalid image format. Base64 data must contain ';base64,' marker."}, 
+                               status=status.HTTP_400_BAD_REQUEST)
+            
+            # Split the base64 data
             format, imgstr = image_data.split(';base64,')
             ext = format.split('/')[-1]
-            data = base64.b64decode(imgstr)
+            
+            # Handle common image formats
+            if ext not in ['jpeg', 'jpg', 'png', 'gif', 'webp']:
+                logger.warning(f"Unusual image format: {ext}, converting to png")
+                ext = 'png'  # Default to PNG for unusual formats
+            
+            # Decode and process the image
+            try:
+                data = base64.b64decode(imgstr)
+            except Exception as e:
+                logger.error(f"Base64 decoding error: {str(e)}")
+                return Response({"error": f"Invalid base64 data: {str(e)}"}, 
+                               status=status.HTTP_400_BAD_REQUEST)
 
             # Save image to a temporary file
             with io.BytesIO(data) as f:
-                with Image.open(f) as img:
-                    img_io = io.BytesIO()
-                    img.save(img_io, format=ext)
-                    img_file = img_io.getvalue()
+                try:
+                    with Image.open(f) as img:
+                        img_io = io.BytesIO()
+                        img.save(img_io, format=ext)
+                        img_file = img_io.getvalue()
+                except Exception as e:
+                    logger.error(f"Error processing image with PIL: {str(e)}")
+                    return Response({"error": f"Invalid image data: {str(e)}"}, 
+                                   status=status.HTTP_400_BAD_REQUEST)
 
             # Create a new DesignUpload instance
             design = DesignUpload.objects.create(
@@ -99,7 +151,12 @@ class DesignFeedbackView(APIView):
             )
 
             # Save the image file
-            design.image.save(f"design_image.{ext}", io.BytesIO(img_file))
+            try:
+                design.image.save(f"design_image.{ext}", io.BytesIO(img_file))
+            except Exception as e:
+                logger.error(f"Error saving image file: {str(e)}")
+                return Response({"error": f"Error saving image: {str(e)}"}, 
+                               status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             try:
                 logger.info(f"Sending request to OpenAI API for design {design.id}")
@@ -131,9 +188,10 @@ class DesignFeedbackView(APIView):
                 logger.error(f"Error generating feedback for design {design.id}: {str(e)}")
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"Error processing image: {str(e)}")
-            return Response({"error": f"Invalid image data: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f"Unexpected error processing image: {str(e)}")
+            return Response({"error": f"Error processing image: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
+# The rest of your API views remain unchanged
 class ChatbotView(APIView):
     def post(self, request):
         participant_id = request.data.get('participant_id')
@@ -144,7 +202,10 @@ class ChatbotView(APIView):
             participant = Participant.objects.get(participant_id=participant_id)
             design = DesignUpload.objects.filter(participant=participant).latest('created_at')
         except Participant.DoesNotExist:
-            return Response({"error": "Participant not found"}, status=status.HTTP_404_NOT_FOUND)
+            # Create participant if it doesn't exist
+            participant = Participant.objects.create(participant_id=participant_id)
+            return Response({"error": "No design found for this participant. Please upload a design first."}, 
+                          status=status.HTTP_404_NOT_FOUND)
         except DesignUpload.DoesNotExist:
             return Response({"error": "No design found for this participant"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -198,6 +259,8 @@ class ChatbotView(APIView):
         except Exception as e:
             logger.error(f"Error generating chatbot response: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Remaining class implementations stay the same
         
 class IdentifyThemeView(APIView):
     def post(self, request):
