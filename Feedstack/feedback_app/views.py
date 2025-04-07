@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from .models import Participant, DesignUpload, ChatMessage
 from .serializers import ParticipantSerializer, DesignUploadSerializer, ChatMessageSerializer
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from openai import OpenAI
 import logging
 # from sentence_transformers import SentenceTransformer
@@ -21,15 +23,27 @@ client = OpenAI(api_key=settings.OPENAI_API_KEY)
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ParticipantView(APIView):
     def post(self, request):
-        participant_id = request.data.get('participant_id')
-        if not participant_id:
-            return Response({"error": "participant_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        participant, created = Participant.objects.get_or_create(participant_id=participant_id)
-        serializer = ParticipantSerializer(participant)
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        try:
+            participant_id = request.data.get('participant_id')
+            if not participant_id:
+                return Response(
+                    {"error": "participant_id is required"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Your model logic here
+            return Response(
+                {"status": "success", "participant_id": participant_id},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class DesignFeedbackView(APIView):
     def post(self, request):

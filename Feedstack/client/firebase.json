@@ -10,15 +10,15 @@
       {
         "source": "/api/**",
         "run": {
-          "serviceId": "feedstack-service",
+          "serviceId": "feedstack",
           "region": "us-east4"
         }
       },
       {
         "source": "**",
         "run": {
-          "serviceId": "feedstack-service",
-          "region": "us-east1"
+          "serviceId": "feedstack",
+          "region": "us-east4"
         }
       }
     ]

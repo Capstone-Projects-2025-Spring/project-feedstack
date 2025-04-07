@@ -22,7 +22,14 @@ function ParticipantLogin() {
       const docId = 'temp-doc-id'; // Use a temporary ID
       
       // Still call your API to maintain backend state
-      await axios.post('http://localhost:8000/api/participant/', { participant_id: participantId });
+      await axios.post('https://feedstack-515733206423.us-east4.run.app/participant/', { participant_id: participantId },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      ;
       
       // Log to console instead of Firebase
       console.log('Participant login event logged (Firebase disabled):', participantId);
