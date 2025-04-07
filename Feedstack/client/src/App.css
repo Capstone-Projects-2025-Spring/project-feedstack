@@ -660,3 +660,120 @@ body {
   transform: translate(-50%, -50%) scale(1.2);
   background-color: #e8f5e9;
 }
+
+
+/* Quick Jump Menu Styles */
+.quick-jump-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.quick-jump-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4ECDC4;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.quick-jump-button:hover {
+  background-color: #45B7D1;
+  transform: scale(1.05);
+}
+
+.quick-jump-button.active {
+  background-color: #FF6B6B;
+}
+
+.menu-icon {
+  font-size: 18px;
+}
+
+.quick-jump-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  padding: 15px;
+  width: 250px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.quick-jump-dropdown h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 16px;
+}
+
+.quick-jump-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.quick-jump-dropdown li {
+  margin-bottom: 5px;
+}
+
+.quick-jump-dropdown button {
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  text-align: left;
+  width: 100%;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quick-jump-dropdown button:hover {
+  background-color: #f1f1f1;
+}
+
+.instance-count {
+  background-color: #eaeaea;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #555;
+}
+
+.sort-options {
+  display: flex;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.sort-options button {
+  padding: 5px 10px;
+  font-size: 12px;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.sort-options button.active {
+  background-color: #4ECDC4;
+  color: white;
+  border-color: #4ECDC4;
+}

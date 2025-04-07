@@ -32,9 +32,43 @@ function DesignUpload() {
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.readAsDataURL(file); // This creates properly formatted data:image/type;base64,
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+      
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          // Create canvas for resizing
+          const canvas = document.createElement('canvas');
+          
+          // Force smaller size
+          const maxSize = 600;
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > height) {
+            height = Math.round((height * maxSize) / width);
+            width = maxSize;
+          } else {
+            width = Math.round((width * maxSize) / height);
+            height = maxSize;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          // Draw and convert
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Lower quality JPEG
+          const resizedImage = canvas.toDataURL('image/jpeg', 0.6);
+          resolve(resizedImage);
+        };
+        
+        img.src = reader.result;
+      };
+      
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
     });
   };
 
@@ -53,14 +87,6 @@ function DesignUpload() {
       console.log("With participant ID:", participantId);
       
       const base64Image = await convertToBase64(file);
-      console.log("Image format:", base64Image.substring(0, 50) + "..."); // Log just the beginning
-      
-      const requestBody = JSON.stringify({
-        image: base64Image,
-        participant: participantId
-      });
-      
-      console.log("Request body length:", requestBody.length);
       
       // Try using fetch instead of axios
       const response = await fetch(`${API_URL}/upload/`, {
@@ -68,27 +94,21 @@ function DesignUpload() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: requestBody
+        body: JSON.stringify({
+          image: base64Image,
+          participant: participantId
+        })
       });
       
       console.log("Response status:", response.status);
       
-      // Get the full error text regardless of status
-      const responseText = await response.text();
-      console.log("Full response:", responseText);
-      
       if (!response.ok) {
-        throw new Error(`Server error: ${response.status} - ${responseText}`);
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Server error: ${response.status}`);
       }
       
-      // Try to parse the response as JSON
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        throw new Error(`Invalid JSON response: ${responseText}`);
-      }
-      
+      const data = await response.json();
       console.log("Success response:", data);
       
       if (data && data.feedback) {
