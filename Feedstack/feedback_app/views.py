@@ -22,19 +22,32 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 class ParticipantView(APIView):
-    def post(self, request):
-        logger.error(f"Raw request data: {request.body}")
-        logger.error(f"Parsed request data: {request.data}")
-        participant_id = request.data.get('participant_id')
-        logger.error(f"Extracted participant_id: {participant_id}")
+    def post(self, request, *args, **kwargs):
+        # Accept both JSON and form data
+        data = request.data
+        print("Request data:", data)
+        
+        participant_id = data.get('participant_id')
+        if not participant_id:
+            # Check if it might be in request.POST or raw body
+            participant_id = request.POST.get('participant_id')
+            if not participant_id and request.body:
+                try:
+                    import json
+                    body_data = json.loads(request.body)
+                    participant_id = body_data.get('participant_id')
+                except:
+                    pass
         
         if not participant_id:
-            logger.error("participant_id is missing or empty")
             return Response({"error": "participant_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         
-        participant, created = Participant.objects.get_or_create(participant_id=participant_id)
-        serializer = ParticipantSerializer(participant)
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        try:
+            participant, created = Participant.objects.get_or_create(participant_id=participant_id)
+            serializer = ParticipantSerializer(participant)
+            return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DesignFeedbackView(APIView):
     def post(self, request):
