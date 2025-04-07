@@ -4,24 +4,7 @@ import { useNavigate } from 'react-router-dom';
 function ParticipantLogin() {
   const [participantId, setParticipantId] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  // First test API connectivity
-  const testApi = async () => {
-    try {
-      const response = await fetch('https://project-feedstack.onrender.com/api/test/');
-      const data = await response.json();
-      console.log('Test API response:', data);
-    } catch (error) {
-      console.error('Test API error:', error);
-    }
-  };
-
-  // Call the test API on component mount
-  React.useEffect(() => {
-    testApi();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,43 +14,20 @@ function ParticipantLogin() {
     }
     
     setLoading(true);
-    setError('');
     
-    try {
-      // Direct URL approach
-      const response = await fetch('https://project-feedstack.onrender.com/api/participant/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ participant_id: participantId })
+    // BYPASS SERVER - Simply navigate to the next page with the participant ID
+    console.log('Bypassing server participant creation');
+    
+    // Add a small delay to simulate API call
+    setTimeout(() => {
+      navigate('/upload', { 
+        state: { 
+          participantId, 
+          docId: 'temp-doc-id' 
+        } 
       });
-      
-      console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Server error: ${response.status}`);
-      }
-      
-      // Even if we can't parse JSON, still try to proceed
-      let data;
-      try {
-        data = await response.json();
-        console.log('Response data:', data);
-      } catch (err) {
-        console.log('Could not parse JSON, but continuing');
-      }
-      
-      // Just proceed anyway - we mainly need the participant ID
-      navigate('/upload', { state: { participantId, docId: 'temp-doc-id' } });
-    } catch (error) {
-      console.error('Error details:', error);
-      setError(error.message);
-    } finally {
       setLoading(false);
-    }
+    }, 500);
   };
 
   return (
@@ -75,7 +35,6 @@ function ParticipantLogin() {
       <div className="login-card">
         <h1>Welcome to Feedstack</h1>
         <p>Enter your Participant ID to get started with AI-powered design feedback.</p>
-        {error && <div style={{color: 'red', marginBottom: '10px'}}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
