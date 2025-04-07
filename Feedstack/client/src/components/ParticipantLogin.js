@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import API_URL from '../config';
 
 function ParticipantLogin() {
@@ -13,24 +12,43 @@ function ParticipantLogin() {
       alert('Please enter a Participant ID');
       return;
     }
+    
     try {
+      console.log('About to make API call to:', `${API_URL}/participant/`);
+      console.log('With payload:', { participant_id: participantId });
+      
+      // Using Fetch API instead of axios
+      const response = await fetch(`${API_URL}/participant/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ participant_id: participantId })
+      });
+      
+      console.log('Response status:', response.status);
+      
+      // Check if the response is ok (status in the range 200-299)
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response text:', errorText);
+        throw new Error(`Server responded with ${response.status}: ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('Fetch response data:', data);
+      
       // Skip Firestore operations
       const docId = 'temp-doc-id'; // Use a temporary ID
-      
-      // Still call your API to maintain backend state
-      await axios.post(`${API_URL}/participant/`, 
-        { participant_id: participantId },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
       
       // Log to console instead of Firebase
       console.log('Participant login event logged (Firebase disabled):', participantId);
       
       navigate('/upload', { state: { participantId, docId } });
     } catch (error) {
-      console.error('Error creating participant:', error);
+      console.error('Error details:', error);
       console.log('Error event logged (Firebase disabled):', error.message);
-      alert('Error: ' + (error.response?.data?.error || 'An unknown error occurred'));
+      alert('Error: ' + error.message);
     }
   };
 

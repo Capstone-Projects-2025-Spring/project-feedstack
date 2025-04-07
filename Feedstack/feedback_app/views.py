@@ -23,8 +23,13 @@ def cosine_similarity(a, b):
 
 class ParticipantView(APIView):
     def post(self, request):
+        logger.error(f"Raw request data: {request.body}")
+        logger.error(f"Parsed request data: {request.data}")
         participant_id = request.data.get('participant_id')
+        logger.error(f"Extracted participant_id: {participant_id}")
+        
         if not participant_id:
+            logger.error("participant_id is missing or empty")
             return Response({"error": "participant_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         
         participant, created = Participant.objects.get_or_create(participant_id=participant_id)
