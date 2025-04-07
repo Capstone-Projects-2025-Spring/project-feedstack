@@ -15,7 +15,9 @@ function ParticipantLogin() {
     
     setLoading(true);
     
-    // BYPASS SERVER - Simply navigate to the next page with the participant ID
+    // Store the ID in localStorage for persistence
+    localStorage.setItem('participantId', participantId);
+    
     console.log('Bypassing server participant creation');
     
     // Add a small delay to simulate API call
