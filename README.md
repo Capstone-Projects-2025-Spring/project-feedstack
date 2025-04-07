@@ -55,6 +55,11 @@ Feedstack is a cutting-edge feedback platform that leverages GPT-4 Vision to del
 
 ---
 
+## Local Launch Guide to start Feedstack
+
+[Feedstack Local Launch Guide.pdf](https://github.com/user-attachments/files/19633953/Feedstack.Local.Launch.Guide.pdf)
+
+
 ## Project Status
 
 Feedstack is currently in its development phase. New features in development include keyword-theme linking, accordion navigation, and improved design understanding through embeddings.
