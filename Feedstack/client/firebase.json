@@ -6,10 +6,20 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
+"rewrites": [
+      {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "feedstack-service",
+          "region": "us-east4"
+        }
+      },
       {
         "source": "**",
-        "destination": "/index.html"
+        "run": {
+          "serviceId": "feedstack-service",
+          "region": "us-east1"
+        }
       }
     ]
   }
