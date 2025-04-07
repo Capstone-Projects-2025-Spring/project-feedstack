@@ -51,14 +51,29 @@ class ParticipantView(APIView):
 
 class DesignFeedbackView(APIView):
     def post(self, request):
+        # Try multiple ways to get participant_id
         participant_id = request.data.get('participant')
+        if not participant_id:
+            # Check alternative data sources
+            participant_id = request.POST.get('participant')
+            
+            if not participant_id and request.body:
+                try:
+                    import json
+                    body_data = json.loads(request.body.decode('utf-8'))
+                    participant_id = body_data.get('participant')
+                except:
+                    pass
+                    
         if not participant_id:
             return Response({"error": "participant ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            participant = Participant.objects.get(participant_id=participant_id)
-        except Participant.DoesNotExist:
-            return Response({"error": "Participant not found"}, status=status.HTTP_404_NOT_FOUND)
+            # Try to get participant or create a new one if it doesn't exist
+            participant, created = Participant.objects.get_or_create(participant_id=participant_id)
+        except Exception as e:
+            # Handle any errors gracefully
+            return Response({"error": f"Error finding/creating participant: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
         image_data = request.data.get('image')
         if not image_data:
@@ -117,8 +132,7 @@ class DesignFeedbackView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             logger.error(f"Error processing image: {str(e)}")
-            return Response({"error": "Invalid image data"}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({"error": f"Invalid image data: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ChatbotView(APIView):
     def post(self, request):

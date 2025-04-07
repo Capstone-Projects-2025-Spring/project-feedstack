@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import API_URL from '../config';
 
 function DesignUpload() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const participantId = location.state?.participantId || 'temp-user';
@@ -29,44 +29,6 @@ function DesignUpload() {
     reader.readAsDataURL(selectedFile);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!file) {
-      alert("Please select a file to upload.");
-      return;
-    }
-    setIsLoading(true);
-
-    try {
-      const base64Image = await convertToBase64(file);
-      const response = await axios.post(`${API_URL}/upload/`, {
-        image: base64Image,
-        participant: participantId
-      });
-
-      if (response.data && response.data.feedback) {
-        // Firebase operations disabled
-        console.log('Firebase operations bypassed for testing');
-
-        navigate('/feedback', {
-          state: {
-            feedback: response.data.feedback,
-            participantId,
-            imageUrl: response.data.image_url,
-            docId
-          }
-        });
-      } else {
-        alert('Upload successful, but no feedback was generated. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Error uploading file: ' + (error.response?.data?.error || error.message));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -76,11 +38,74 @@ function DesignUpload() {
     });
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!file) {
+      alert("Please select a file to upload.");
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log("Sending upload request to:", `${API_URL}/upload/`);
+      console.log("With participant ID:", participantId);
+      
+      const base64Image = await convertToBase64(file);
+      
+      // Try using fetch instead of axios
+      const response = await fetch(`${API_URL}/upload/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image,
+          participant: participantId
+        })
+      });
+      
+      console.log("Response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Server error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("Success response:", data);
+      
+      if (data && data.feedback) {
+        // Log success
+        console.log('Successfully processed design and got feedback');
+        
+        navigate('/feedback', {
+          state: {
+            feedback: data.feedback,
+            participantId,
+            imageUrl: data.image_url,
+            docId
+          }
+        });
+      } else {
+        setError('Upload successful, but no feedback was generated. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error details:', error);
+      setError('Error uploading file: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="design-upload-container">
       <div className="upload-card">
         <h1>Upload Your Design</h1>
         <p>Share your creative work and get AI-powered feedback</p>
+        {error && <div className="error-message" style={{color: 'red', marginBottom: '15px'}}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="file-input-container">
             <input
