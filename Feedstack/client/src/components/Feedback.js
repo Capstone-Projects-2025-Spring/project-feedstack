@@ -36,12 +36,15 @@ function Feedback() {
   const [teaserChapters, setTeaserChapters] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [scrubPosition, setScrubPosition] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [sortMode, setSortMode] = useState('appearance');
   const location = useLocation();
   const { feedback, participantId, imageUrl, docId } = location.state || 
     { feedback: 'No feedback available', participantId: 'temp-user', imageUrl: '', docId: 'temp-doc' };
   const chatContainerRef = useRef(null);
   const scrubTrackRef = useRef(null);
   const audioRef = useRef(new Audio(popSound));
+  const menuRef = useRef(null);
 
   useEffect(() => {
     setChatMessages([{ content: feedback, is_user: false }]);
@@ -59,6 +62,22 @@ function Feedback() {
       }))
     );
   }, []);
+
+  // Click outside handler for the Quick Jump Menu
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    }
+    
+    // Add event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Remove event listener on cleanup
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
 
   const generateInitialSummary = async (feedback) => {
     try {
@@ -611,7 +630,7 @@ function Feedback() {
         )}
       </div>
       <div className="accordion-container">
-        <h3>Theme Summaries</h3>
+        <h3>Design Principles</h3>
         {(chapters || []).map((item, index) => (
           <div
             key={index}
@@ -704,6 +723,92 @@ function Feedback() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Quick Jump Menu - Floating Button */}
+      <div className="quick-jump-container" ref={menuRef}>
+        <button 
+          className={`quick-jump-button ${menuOpen ? 'active' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Quick Jump Menu"
+        >
+          <span className="menu-icon">☰</span>
+        </button>
+        
+        {menuOpen && (
+          <div className="quick-jump-dropdown">
+            <h3>Navigate to Design Principles</h3>
+            <div className="sort-options">
+              <button 
+                className={sortMode === 'appearance' ? 'active' : ''}
+                onClick={() => setSortMode('appearance')}
+              >
+                By Appearance
+              </button>
+              <button 
+                className={sortMode === 'relevance' ? 'active' : ''}
+                onClick={() => setSortMode('relevance')}
+              >
+                By Instances
+              </button>
+            </div>
+            <ul>
+              {sortMode === 'relevance' 
+                ? [...chapters].sort((a, b) => (b.instances?.length || 0) - (a.instances?.length || 0)).map((chapter, idx) => (
+                  <li key={idx}>
+                    <button 
+                      onClick={() => {
+                        // Find the chapter's index in the original array
+                        const originalIdx = chapters.findIndex(c => c.id === chapter.id);
+                        
+                        // Find corresponding bookmark to get message index
+                        const bookmark = bookmarks.find(bm => bm.id === chapter.id);
+                        
+                        // Set active theme for accordion
+                        setActiveTheme(originalIdx);
+                        clickLogger(chapter.id, "quick-jump");
+                        setMenuOpen(false);
+                        
+                        // Scroll to the chat message if we found a bookmark
+                        if (bookmark) {
+                          scrollToBookmark(bookmark.messageIndex);
+                        }
+                      }}
+                    >
+                      {chapter.theme} {chapter.instances && chapter.instances.length > 1 && 
+                        <span className="instance-count">({chapter.instances.length})</span>
+                      }
+                    </button>
+                  </li>
+                ))
+                : chapters.map((chapter, idx) => (
+                  <li key={idx}>
+                    <button 
+                      onClick={() => {
+                        // Find corresponding bookmark to get message index
+                        const bookmark = bookmarks.find(bm => bm.id === chapter.id);
+                        
+                        // Set active theme for accordion
+                        setActiveTheme(idx);
+                        clickLogger(chapter.id, "quick-jump");
+                        setMenuOpen(false);
+                        
+                        // Scroll to the chat message if we found a bookmark
+                        if (bookmark) {
+                          scrollToBookmark(bookmark.messageIndex);
+                        }
+                      }}
+                    >
+                      {chapter.theme} {chapter.instances && chapter.instances.length > 1 && 
+                        <span className="instance-count">({chapter.instances.length})</span>
+                      }
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
