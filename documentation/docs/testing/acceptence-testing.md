@@ -48,3 +48,45 @@ pipeline {
     }
 }
 ```
+
+## 1. User Login and Upload
+
+**Test Cases:**
+- User can successfully log in using an ID.
+- User is blocked from uploading without logging in.
+- After login, user is prompted to upload a design image.
+- System accepts supported image formats (e.g., JPG, PNG).
+- Uploaded image is displayed clearly on the left-hand side.
+
+---
+
+## 2. Chatbot Feedback Interaction
+
+**Test Cases:**
+- Chatbot generates accurate and context-aware feedback after a user query.
+- Chat interface accepts multiline input and handles long queries.
+- GPT-4o API returns feedback within an acceptable response time.
+- Feedback refers to specific design elements in the uploaded image.
+- No hallucinations or feedback errors occur under normal use.
+
+---
+
+## 3. Theme Detection and Accordion Generation
+
+**Test Cases:**
+- Each chatbot response is correctly analyzed for design themes (Accessibility, Visual Hierarchy, etc.).
+- Accurate accordion is generated with the right theme title.
+- Clicking the accordion displays the corresponding feedback summary.
+- Multiple feedback instances under the same theme are listed correctly with summaries.
+
+---
+
+## 4. Highlighted Keywords
+
+**Test Cases:**
+- Key design-related terms are correctly highlighted in the chatbot response.
+- All keywords under each accordion are listed below it accurately.
+
+
+
+
