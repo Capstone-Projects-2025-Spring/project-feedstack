@@ -796,3 +796,77 @@ body {
   color: white;
   border-color: #4ECDC4;
 }
+
+/* Chat Loading Indicator */
+.bot-typing {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  margin: 0 3px;
+  display: inline-block;
+  animation: typing 1.5s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+.bot-typing p {
+  margin-left: 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+.supported-formats {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.supported-formats span {
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+
+.gdpr-consent {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.gdpr-consent input {
+  margin-right: 10px;
+  margin-top: 4px;
+  width: auto !important;
+}
+
+.gdpr-consent label {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}

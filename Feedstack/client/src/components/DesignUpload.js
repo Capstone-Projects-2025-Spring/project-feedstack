@@ -7,6 +7,7 @@ function DesignUpload() {
   const [preview, setPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [gdprConsent, setGdprConsent] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const participantId = location.state?.participantId || 'temp-user';
@@ -20,7 +21,16 @@ function DesignUpload() {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+    
+    // Check file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (selectedFile.size > maxSize) {
+      setError(`File size exceeds 5MB limit. Your file is ${(selectedFile.size / (1024 * 1024)).toFixed(2)}MB`);
+      return;
+    }
+    
     setFile(selectedFile);
+    setError(null); // Clear any previous errors
 
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -76,6 +86,11 @@ function DesignUpload() {
     event.preventDefault();
     if (!file) {
       alert("Please select a file to upload.");
+      return;
+    }
+    
+    if (!gdprConsent) {
+      setError("Please agree to the GDPR consent to proceed.");
       return;
     }
     
@@ -139,6 +154,7 @@ function DesignUpload() {
       <div className="upload-card">
         <h1>Upload Your Design</h1>
         <p>Share your creative work and get AI-powered feedback</p>
+        <p className="supported-formats">Supported formats: <span>.PNG, .JPG, .JPEG, .PDF</span></p>
         {error && <div className="error-message" style={{color: 'red', marginBottom: '15px'}}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="file-input-container">
@@ -157,7 +173,18 @@ function DesignUpload() {
               <img src={preview} alt="Preview" />
             </div>
           )}
-          <button type="submit" disabled={!file || isLoading}>
+          <div className="gdpr-consent">
+            <input
+              type="checkbox"
+              id="gdpr-checkbox"
+              checked={gdprConsent}
+              onChange={(e) => setGdprConsent(e.target.checked)}
+            />
+            <label htmlFor="gdpr-checkbox">
+              I agree to the processing of my design data for feedback purposes in accordance with the GDPR
+            </label>
+          </div>
+          <button type="submit" disabled={!file || isLoading || !gdprConsent}>
             {isLoading ? 'Uploading...' : 'Get Feedback'}
           </button>
         </form>
