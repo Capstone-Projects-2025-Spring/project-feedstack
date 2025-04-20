@@ -41,7 +41,7 @@ function DesignUpload() {
 
     try {
       const base64Image = await convertToBase64(file);
-      const response = await axios.post('http://localhost:8000/api/upload/', {
+      const response = await axios.post('http://feedstack-b2cc1.web.app/api/upload/', {
         image: base64Image,
         participant: participantId
       });

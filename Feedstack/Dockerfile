@@ -21,7 +21,7 @@ COPY --from=frontend-builder /client/build /app/client_build
 
 RUN pip install --no-cache-dir gunicorn
 
-ENV PORT=8000
+ENV PORT=8080
 EXPOSE $PORT
 
 

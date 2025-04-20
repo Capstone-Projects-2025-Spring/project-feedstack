@@ -36,7 +36,16 @@ SECRET_KEY = 'django-insecure-srsjcch3)!h)2qd*3hd@a*3)2@lws#6e6v)mw01l%&t*k*3f1-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.fly.dev',  # Fly.io's default domain
+    '.web.app',  # Firebase Hosting
+    '.firebaseapp.com',  # Firebase alternate domain
+    '.feedstack-b2cc1.web.app',  # Firebase domain
+    '.feedstack-b2cc1.firebaseapp.com',  # Firebase alternate
+    '.feedstack-515733206423.us-east4.run.app'
+]
 
 
 # Application definition
@@ -142,3 +151,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True  
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True

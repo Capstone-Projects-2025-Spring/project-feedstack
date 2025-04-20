@@ -55,7 +55,7 @@ function Feedback() {
 
   const generateInitialSummary = async (feedback) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/summarize/', {
+      const response = await axios.post('http://feedstack-b2cc1.web.app/api/summarize/', {
         text: feedback,
         theme: 'Initial Feedback'
       });
@@ -93,7 +93,7 @@ function Feedback() {
       await addDoc(collection(db, `Participants/${docId}/ChatLogs`), userMessageDoc);  
       console.log('User message added to Firestore:', userMessageDoc);
 
-      const response = await axios.post('http://localhost:8000/api/chat/', {
+      const response = await axios.post('http://feedstack-b2cc1.web.app/api/chat/', {
         participant_id: participantId,
         message: newMessage,
         conversation_history: chatMessages
@@ -111,14 +111,14 @@ function Feedback() {
       await addDoc(collection(db, `Participants/${docId}/ChatLogs`), botMessageDoc);  
       console.log('Bot message added to Firestore:', botMessageDoc);
       
-      const themeResponse = await axios.post('http://localhost:8000/api/identify-theme/', {
+      const themeResponse = await axios.post('http://feedstack-b2cc1.web.app/api/identify-theme/', {
         message: botMessage.content,
       });
       
       const newTheme = themeResponse.data.theme;
       const newColor = themeColors[chapters.length % themeColors.length];
       
-      const summaryResponse = await axios.post('http://localhost:8000/api/summarize/', {
+      const summaryResponse = await axios.post('http://feedstack-b2cc1.web.app/api/summarize/', {
         message: botMessage.content,
         theme: newTheme
       });
@@ -269,7 +269,7 @@ function Feedback() {
   const handleInstanceNavigation = (theme, direction) => {
     setChapters(prevChapters => 
       prevChapters.map(item => {
-        if (item.them === theme) {
+        if (item.theme === theme) {
           // update instance index, min 0 and max colorScale.length-1
           const newInstance = Math.max(0, Math.min(item.instances.length-1, item.currentInstance + direction));
         return {
@@ -286,7 +286,7 @@ function Feedback() {
   return (
     <div className="feedback-container">
       <div className="image-container">
-        <img src={`http://localhost:8000${imageUrl}`} alt="Uploaded design" />
+        <img src={`http://feedstack-b2cc1.web.app/${imageUrl}`} alt="Uploaded design" />
       </div>
       <div className="feedback-chat-container">
         <div className="teaser-chapters">
