@@ -24,7 +24,7 @@ function ParticipantLogin() {
         Themes: []
       });
 
-      await axios.post('http://localhost:8000/api/participant/', { participant_id: participantId });
+      await axios.post('http://feedstack-b2cc1.web.app/api/participant/', { participant_id: participantId });
       navigate('/upload', { state: { participantId, docId } });
 
       logTestEvent(participantId);
