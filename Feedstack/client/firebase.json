@@ -8,6 +8,13 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "feedstack",
+          "region": "us-east4"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

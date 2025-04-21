@@ -27,9 +27,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-srsjcch3)!h)2qd*3hd@a*3)2@lws#6e6v)mw01l%&t*k*3f1-')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.render.com']
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.fly.dev',  # Fly.io's default domain
+    '.web.app',  # Firebase Hosting
+    '.firebaseapp.com',  # Firebase alternate domain
+    '.feedstack-b2cc1.web.app',  # Firebase domain
+    '.feedstack-b2cc1.firebaseapp.com',  # Firebase alternate
+    '.feedstack-515733206423.us-east4.run.app',
+    '.render.com'
+]
+
 
 # Application definition
 
@@ -135,7 +146,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
+USE_X_FORWARDED_HOST = True
 CORS_ALLOW_CREDENTIALS = True
