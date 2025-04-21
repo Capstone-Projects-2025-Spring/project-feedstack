@@ -184,15 +184,13 @@ function Feedback() {
       
       const botMessage = response.data.bot_message;
       
-      // Log to console instead of Firebase
-      console.log('Bot message (Firebase disabled):', botMessage.content);
-      
+      //Bot Message Check
+      console.log('Bot message:', botMessage.content);
 
       const themeResponse = await axios.post(`${API_URL}/identify-theme/`, {
-        
         message: botMessage.content,
       });
-      
+
       const newTheme = themeResponse.data.theme;
       const newColor = themeColors[chapters.length % themeColors.length];
       const summaryResponse = await axios.post(`${API_URL}/summarize/`, {
@@ -203,15 +201,6 @@ function Feedback() {
       const { definition, relation, key_terms, summary } = summaryResponse.data;
       botMessage.keyTerms = summaryResponse.data.key_terms || [];
       setChatMessages(prevMessages => [...prevMessages, botMessage]);
-
-      // Log to console instead of Firebase
-      console.log('Theme (Firebase disabled):', {
-        theme: newTheme, 
-        definition, 
-        relation, 
-        key_terms, 
-        summary
-      });
       
       // Generate a temporary ID for the theme
       const tempThemeId = 'theme-' + Date.now();

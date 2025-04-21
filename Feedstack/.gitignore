@@ -105,3 +105,6 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+#media folder
+/media/uploads
