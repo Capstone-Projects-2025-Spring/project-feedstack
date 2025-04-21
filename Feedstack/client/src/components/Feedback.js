@@ -38,6 +38,7 @@ function Feedback() {
   const [scrubPosition, setScrubPosition] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [sortMode, setSortMode] = useState('appearance');
+  const [isMessageLoading, setIsMessageLoading] = useState(false);
   const location = useLocation();
   const { feedback, participantId, imageUrl, docId } = location.state || 
     { feedback: 'No feedback available', participantId: 'temp-user', imageUrl: '', docId: 'temp-doc' };
@@ -144,6 +145,7 @@ function Feedback() {
     const userMessage = { content: newMessage, is_user: true };
     setChatMessages(prevMessages => [...prevMessages, userMessage]);
     setNewMessage('');
+    setIsMessageLoading(true); // Set loading to true when sending
 
     try {
       // Log to console instead of Firebase
@@ -274,6 +276,8 @@ function Feedback() {
     } catch (error) {
       console.error('Error sending message:', error);
       setChatMessages(prevMessages => [...prevMessages, { content: "Sorry, I encountered an error. Please try again.", is_user: false }]);
+    } finally {
+      setIsMessageLoading(false); // Set loading to false when done
     }
   };
 
@@ -463,12 +467,12 @@ function Feedback() {
     }
   };
 
-  // Handle scrub drag
-  const handleScrubDrag = (e) => {
-    if (!scrubTrackRef.current || e.clientX === 0) return;
+  // Handle vertical scrub drag
+  const handleVerticalScrubDrag = (e) => {
+    if (!scrubTrackRef.current || e.clientY === 0) return;
     
     const trackRect = scrubTrackRef.current.getBoundingClientRect();
-    const position = Math.max(0, Math.min(1, (e.clientX - trackRect.left) / trackRect.width));
+    const position = Math.max(0, Math.min(1, (e.clientY - trackRect.top) / trackRect.height));
     
     // Update scrub position
     setScrubPosition(position);
@@ -522,83 +526,98 @@ function Feedback() {
             />
           ))}
         </div>
-        <div className="chat-container" ref={chatContainerRef}>
-          {(chatMessages || []).map((msg, index) => {
-            // For each message, find if any theme's key terms should be highlighted
-            let termsToHighlight = [];
-            
-            if (!msg.is_user) {
-              // Get ALL key terms from ALL themes to improve highlighting coverage
-              chapters.forEach(chapter => {
-                if (chapter.key_terms && Array.isArray(chapter.key_terms)) {
-                  termsToHighlight.push(...chapter.key_terms);
-                }
-              });
-              
-              // If this message has keyTerms attached (from the API), add those too
-              if (msg.keyTerms && Array.isArray(msg.keyTerms)) {
-                termsToHighlight.push(...msg.keyTerms);
-              }
-              
-              // Remove duplicates and empty terms
-              termsToHighlight = [...new Set(termsToHighlight)].filter(term => term && term.trim().length > 0);
-            }
-
-            return (
-              <div
-                key={index} 
-                className={`message ${msg.is_user ? 'user-message' : 'bot-message'}`}
-              >
-                {msg.is_user ? (
-                  <div>{msg.content}</div>
-                ) : (
-                  <div dangerouslySetInnerHTML={{ 
-                    __html: highlightMessage(msg.content, termsToHighlight) 
-                  }} />
-                )}
-              </div>
-            );
-          })}
-        </div>
         
-        {/* Timeline Scrub Bar - positioned above the input field */}
-        <div className="timeline-scrubbar">
-          <div className="timeline-track" ref={scrubTrackRef}>
-            {/* Create markers for each bookmark/theme point */}
-            {bookmarks.map((bookmark, index) => (
-              <div 
-                key={index}
-                className="timeline-marker"
-                style={{ 
-                  backgroundColor: bookmark.color,
-                  left: `${(bookmark.messageIndex / Math.max(chatMessages.length - 1, 1)) * 100}%` 
-                }}
-                onClick={() => navigateToThemeMessage(bookmark.messageIndex, bookmark.id)}
-              >
-                <div className="timeline-tooltip">
-                  {/* Find theme name from bookmark id */}
-                  {chapters.find(chapter => chapter.id === bookmark.id)?.theme || 'Unknown Theme'}
-                  <div className="tooltip-excerpt">
-                    {chatMessages[bookmark.messageIndex]?.content.slice(0, 60)}...
+        <div className="chat-container-wrapper">
+          <div className="chat-container" ref={chatContainerRef}>
+            {(chatMessages || []).map((msg, index) => {
+              // For each message, find if any theme's key terms should be highlighted
+              let termsToHighlight = [];
+              
+              if (!msg.is_user) {
+                // Get ALL key terms from ALL themes to improve highlighting coverage
+                chapters.forEach(chapter => {
+                  if (chapter.key_terms && Array.isArray(chapter.key_terms)) {
+                    termsToHighlight.push(...chapter.key_terms);
+                  }
+                });
+                
+                // If this message has keyTerms attached (from the API), add those too
+                if (msg.keyTerms && Array.isArray(msg.keyTerms)) {
+                  termsToHighlight.push(...msg.keyTerms);
+                }
+                
+                // Remove duplicates and empty terms
+                termsToHighlight = [...new Set(termsToHighlight)].filter(term => term && term.trim().length > 0);
+              }
+
+              return (
+                <div
+                  key={index} 
+                  className={`message ${msg.is_user ? 'user-message' : 'bot-message'}`}
+                >
+                  {msg.is_user ? (
+                    <div>{msg.content}</div>
+                  ) : (
+                    <div dangerouslySetInnerHTML={{ 
+                      __html: highlightMessage(msg.content, termsToHighlight) 
+                    }} />
+                  )}
+                </div>
+              );
+            })}
+            
+            {/* Loading indicator */}
+            {isMessageLoading && (
+              <div className="bot-typing">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <p>AI is thinking...</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Vertical Timeline Scrub Bar - positioned on the right */}
+          <div className="timeline-scrubbar vertical">
+            <div className="timeline-track" ref={scrubTrackRef}>
+              {/* Create markers for each bookmark/theme point */}
+              {bookmarks.map((bookmark, index) => (
+                <div 
+                  key={index}
+                  className="timeline-marker"
+                  style={{ 
+                    backgroundColor: bookmark.color,
+                    top: `${(bookmark.messageIndex / Math.max(chatMessages.length - 1, 1)) * 100}%` 
+                  }}
+                  onClick={() => navigateToThemeMessage(bookmark.messageIndex, bookmark.id)}
+                >
+                  <div className="timeline-tooltip">
+                    <h4>{chapters.find(chapter => chapter.id === bookmark.id)?.theme || 'Unknown Theme'}</h4>
+                    <p className="tooltip-excerpt">
+                      {chapters.find(chapter => chapter.id === bookmark.id)?.relation?.slice(0, 100) || 
+                        "What strategies can enhance call-to-action button visibility..."}
+                    </p>
                   </div>
                 </div>
-              </div>
-            ))}
-            
-            {/* Scrub handle */}
-            <div 
-              className="scrub-handle"
-              style={{ left: `${scrubPosition * 100}%` }}
-              draggable="true"
-              onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', '');
-                e.currentTarget.classList.add('dragging');
-              }}
-              onDrag={handleScrubDrag}
-              onDragEnd={(e) => {
-                e.currentTarget.classList.remove('dragging');
-              }}
-            />
+              ))}
+              
+              {/* Scrub handle */}
+              <div 
+                className="scrub-handle"
+                style={{ top: `${scrubPosition * 100}%` }}
+                draggable="true"
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', '');
+                  e.currentTarget.classList.add('dragging');
+                }}
+                onDrag={handleVerticalScrubDrag}
+                onDragEnd={(e) => {
+                  e.currentTarget.classList.remove('dragging');
+                }}
+              />
+            </div>
           </div>
         </div>
         
@@ -611,6 +630,7 @@ function Feedback() {
           />
           <button type="submit">Send</button>
         </form>
+        
         {suggestions.length > 0 && (
           <div className="suggestions-container">
             {suggestions.map((suggestion, index) => (
