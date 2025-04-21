@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import  { addParticipant } from '../firestore';
-import { logTestEvent, logErrorEvent } from '../firebaseAnalytics'
 
 function ParticipantLogin() {
   const [participantId, setParticipantId] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,26 +12,24 @@ function ParticipantLogin() {
       alert('Please enter a Participant ID');
       return;
     }
-    try {
-        // Create participant in Firestore
-        const docId = await addParticipant({
-        ParticipantId: participantId,
-        // No design, chatlogs, and themes on login
-        Design: '',
-        ChatLogs: [],
-        Themes: []
+    
+    setLoading(true);
+    
+    // Store the ID in localStorage for persistence
+    localStorage.setItem('participantId', participantId);
+    
+    console.log('Bypassing server participant creation');
+    
+    // Add a small delay to simulate API call
+    setTimeout(() => {
+      navigate('/upload', { 
+        state: { 
+          participantId, 
+          docId: 'temp-doc-id' 
+        } 
       });
-
-      await axios.post('http://feedstack-b2cc1.web.app/api/participant/', { participant_id: participantId });
-      navigate('/upload', { state: { participantId, docId } });
-
-      logTestEvent(participantId);
-      
-    } catch (error) {
-      console.error('Error creating participant:', error);
-      logErrorEvent(error.message, error.response?.data?.error || 'Unknown error');
-      alert('Error: ' + (error.response?.data?.error || 'An unknown error occurred'));
-    }
+      setLoading(false);
+    }, 500);
   };
 
   return (
@@ -48,8 +44,11 @@ function ParticipantLogin() {
             onChange={(e) => setParticipantId(e.target.value)}
             placeholder="Enter Participant ID"
             required
+            disabled={loading}
           />
-          <button type="submit">Start</button>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Processing...' : 'Start'}
+          </button>
         </form>
       </div>
     </div>

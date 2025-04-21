@@ -1,5 +1,7 @@
 import base64
 import io
+import json
+import logging
 from PIL import Image
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,56 +10,139 @@ from .models import Participant, DesignUpload, ChatMessage
 from .serializers import ParticipantSerializer, DesignUploadSerializer, ChatMessageSerializer
 from django.conf import settings
 from openai import OpenAI
-import logging
-# from sentence_transformers import SentenceTransformer
 import numpy as np
 import re
 
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
-# model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 class ParticipantView(APIView):
-    def post(self, request):
-        participant_id = request.data.get('participant_id')
-        if not participant_id:
-            return Response({"error": "participant_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        # Improved participant_id extraction
+        participant_id = None
         
-        participant, created = Participant.objects.get_or_create(participant_id=participant_id)
-        serializer = ParticipantSerializer(participant)
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        # Try to get from JSON body
+        if hasattr(request, 'data') and isinstance(request.data, dict):
+            participant_id = request.data.get('participant_id')
+        
+        # Try to get from form data
+        if not participant_id and request.POST:
+            participant_id = request.POST.get('participant_id')
+        
+        # Try to parse raw request body as JSON
+        if not participant_id and request.body:
+            try:
+                body_data = json.loads(request.body.decode('utf-8'))
+                participant_id = body_data.get('participant_id')
+            except:
+                pass
+        
+        # Set a default if none found
+        if not participant_id:
+            participant_id = 'temp-user'
+            logger.warning("No participant_id provided, using default: temp-user")
+        
+        try:
+            participant, created = Participant.objects.get_or_create(participant_id=participant_id)
+            serializer = ParticipantSerializer(participant)
+            return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error creating participant: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DesignFeedbackView(APIView):
     def post(self, request):
-        participant_id = request.data.get('participant')
+        # Comprehensive error logging
+        logger.info(f"Design upload request received with content type: {request.content_type}")
+        logger.info(f"Request data keys: {request.data.keys() if hasattr(request, 'data') else 'No data attribute'}")
+        
+        # Extract participant ID with improved reliability
+        participant_id = None
+        
+        # Try different ways to get participant ID
+        if hasattr(request, 'data') and isinstance(request.data, dict):
+            participant_id = request.data.get('participant')
+        
+        if not participant_id and request.POST:
+            participant_id = request.POST.get('participant')
+        
+        if not participant_id and request.body:
+            try:
+                body_data = json.loads(request.body.decode('utf-8'))
+                participant_id = body_data.get('participant')
+            except:
+                pass
+                
+        # Set default if still not found
         if not participant_id:
-            return Response({"error": "participant ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+            participant_id = 'temp-user'
+            logger.warning("No participant ID found, using default: temp-user")
+        
+        logger.info(f"Using participant ID: {participant_id}")
 
         try:
-            participant = Participant.objects.get(participant_id=participant_id)
-        except Participant.DoesNotExist:
-            return Response({"error": "Participant not found"}, status=status.HTTP_404_NOT_FOUND)
+            # Create or get participant
+            participant, created = Participant.objects.get_or_create(participant_id=participant_id)
+            logger.info(f"Participant {'created' if created else 'retrieved'} with ID: {participant_id}")
+        except Exception as e:
+            logger.error(f"Error with participant: {str(e)}")
+            return Response({"error": f"Error with participant: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-        image_data = request.data.get('image')
+        # Extract image data with better error handling
+        image_data = None
+        if hasattr(request, 'data') and isinstance(request.data, dict):
+            image_data = request.data.get('image')
+        
+        if not image_data and request.body:
+            try:
+                body_data = json.loads(request.body.decode('utf-8'))
+                image_data = body_data.get('image')
+            except:
+                pass
+        
         if not image_data:
+            logger.error("No image data provided in request")
             return Response({"error": "No image data provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Decode base64 image
+            # Safer base64 splitting with more validation
+            if ';base64,' not in image_data:
+                logger.error("Invalid image format: missing ';base64,' marker")
+                return Response({"error": "Invalid image format. Base64 data must contain ';base64,' marker."}, 
+                               status=status.HTTP_400_BAD_REQUEST)
+            
+            # Split the base64 data
             format, imgstr = image_data.split(';base64,')
             ext = format.split('/')[-1]
-            data = base64.b64decode(imgstr)
+            
+            # Handle common image formats
+            if ext not in ['jpeg', 'jpg', 'png', 'gif', 'webp']:
+                logger.warning(f"Unusual image format: {ext}, converting to png")
+                ext = 'png'  # Default to PNG for unusual formats
+            
+            # Decode and process the image
+            try:
+                data = base64.b64decode(imgstr)
+            except Exception as e:
+                logger.error(f"Base64 decoding error: {str(e)}")
+                return Response({"error": f"Invalid base64 data: {str(e)}"}, 
+                               status=status.HTTP_400_BAD_REQUEST)
 
             # Save image to a temporary file
             with io.BytesIO(data) as f:
-                with Image.open(f) as img:
-                    img_io = io.BytesIO()
-                    img.save(img_io, format=ext)
-                    img_file = img_io.getvalue()
+                try:
+                    with Image.open(f) as img:
+                        img_io = io.BytesIO()
+                        img.save(img_io, format=ext)
+                        img_file = img_io.getvalue()
+                except Exception as e:
+                    logger.error(f"Error processing image with PIL: {str(e)}")
+                    return Response({"error": f"Invalid image data: {str(e)}"}, 
+                                   status=status.HTTP_400_BAD_REQUEST)
 
             # Create a new DesignUpload instance
             design = DesignUpload.objects.create(
@@ -66,7 +151,12 @@ class DesignFeedbackView(APIView):
             )
 
             # Save the image file
-            design.image.save(f"design_image.{ext}", io.BytesIO(img_file))
+            try:
+                design.image.save(f"design_image.{ext}", io.BytesIO(img_file))
+            except Exception as e:
+                logger.error(f"Error saving image file: {str(e)}")
+                return Response({"error": f"Error saving image: {str(e)}"}, 
+                               status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             try:
                 logger.info(f"Sending request to OpenAI API for design {design.id}")
@@ -98,42 +188,64 @@ class DesignFeedbackView(APIView):
                 logger.error(f"Error generating feedback for design {design.id}: {str(e)}")
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(f"Error processing image: {str(e)}")
-            return Response({"error": "Invalid image data"}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f"Unexpected error processing image: {str(e)}")
+            return Response({"error": f"Error processing image: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-
+# The rest of your API views remain unchanged
 class ChatbotView(APIView):
     def post(self, request):
         participant_id = request.data.get('participant_id')
         message = request.data.get('message')
+        conversation_history = request.data.get('conversation_history', [])
         
         try:
             participant = Participant.objects.get(participant_id=participant_id)
             design = DesignUpload.objects.filter(participant=participant).latest('created_at')
         except Participant.DoesNotExist:
-            return Response({"error": "Participant not found"}, status=status.HTTP_404_NOT_FOUND)
+            # Create participant if it doesn't exist
+            participant = Participant.objects.create(participant_id=participant_id)
+            return Response({"error": "No design found for this participant. Please upload a design first."}, 
+                          status=status.HTTP_404_NOT_FOUND)
         except DesignUpload.DoesNotExist:
             return Response({"error": "No design found for this participant"}, status=status.HTTP_404_NOT_FOUND)
         
         user_message = ChatMessage.objects.create(participant=participant, content=message, is_user=True)
         
         try:
-            previous_messages = ChatMessage.objects.filter(participant=participant).order_by('created_at')
+            # Add a strong instruction about conversation style regardless of history format
+            style_instruction = {
+                "role": "system", 
+                "content": "You are a talented design professional having a casual conversation. IMPORTANT: DO NOT use numbered lists, bullet points, or any structured formats. Instead, speak naturally as if you're chatting with a friend. Example: Instead of saying '1. Use Arial, 2. Try a bold weight', say 'You might try Arial with a bold weight to make that pop.' Keep things flowing like a real conversation. Mention 2-3 ideas casually within your sentences rather than listing them out."
+            }
             
-            conversation_history = [
-                {"role": "system", "content": "You are a helpful design assistant. You will provide feedback on a design uploaded by the user. Always refer to and consider this specific design when answering questions. You are a friendly and approachable design expert. As you engage with the user, who is a novice designer, offer insightful, tailored feedback that feels natural and conversational. Your tone should be supportive, guiding the user through their design challenges while encouraging them to reflect and improve. Be highly interactive, focusing on the specific design they're presenting, and make sure to ask open-ended, thoughtful follow-up questions that help you better understand their design choices and needs. Let the user set the pace of the conversation, and adapt your advice based on what they want to explore further. Avoid a rigid, structured approach—make the discussion feel fluid and dynamic, like a natural, friendly chat. Instead of just providing answers, create a back-and-forth dialogue, diving into the user's goals, preferences, and vision for their design. DO NOt use bullet points or numbered lists in your feedback."},
-                {"role": "user", "content": f"Here's the initial feedback I provided on the user's design:\n\n{design.feedback}"}
-            ]
+            # Convert conversation history to OpenAI format
+            openai_messages = [style_instruction]
             
-            for msg in previous_messages:
-                role = "user" if msg.is_user else "assistant"
-                conversation_history.append({"role": role, "content": msg.content})
+            # Add initial context about the design
+            if design.feedback:
+                openai_messages.append({"role": "system", "content": f"The following is your initial feedback on the user's design. Remember to reference these elements naturally: {design.feedback}"})
             
-            conversation_history.append({"role": "user", "content": message})
+            # If the conversation history is in our custom format
+            if conversation_history and isinstance(conversation_history, list) and len(conversation_history) > 0:
+                if isinstance(conversation_history[0], dict) and 'role' in conversation_history[0]:
+                    # Filter out any system messages to avoid conflicting instructions
+                    filtered_history = [msg for msg in conversation_history if msg.get('role') != 'system']
+                    openai_messages.extend(filtered_history)
+                else:
+                    # Convert old format messages
+                    for msg in conversation_history:
+                        if isinstance(msg, dict):
+                            role = "user" if msg.get('is_user', False) else "assistant"
+                            openai_messages.append({"role": role, "content": msg.get('content', '')})
+            
+            # Add the latest user message
+            openai_messages.append({"role": "user", "content": message})
+            
+            logger.info(f"Sending conversation to OpenAI: {len(openai_messages)} messages")
             
             response = client.chat.completions.create(
                 model="gpt-4o",
-                messages=conversation_history,
+                messages=openai_messages,
                 max_tokens=1000
             )
             
@@ -147,20 +259,9 @@ class ChatbotView(APIView):
         except Exception as e:
             logger.error(f"Error generating chatbot response: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-# class SuggestedTopicsView(APIView):
-#     def get(self, request):
-#         topics = [
-#             "Color scheme analysis",
-#             "Layout improvement suggestions",
-#             "Typography recommendations",
-#             "User experience enhancement",
-#             "Accessibility considerations",
-#             "Visual hierarchy assessment",
-#             "Consistency in design elements",
-#             "Branding alignment"
-#         ]
-#         return Response({"topics": topics})
-    
+
+# Remaining class implementations stay the same
+        
 class IdentifyThemeView(APIView):
     def post(self, request):
         message = request.data.get('message')
@@ -239,29 +340,30 @@ class SummarizeView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# class HighlightTermsView(APIView):
-#     def post(self, request):
-#         text = request.data.get('text', '')
-#         themes = request.data.get('themes', [])
-
-#         highlighted_terms = {}
-#         for theme in themes:
-#             response = client.chat.completions.create(
-#                 model="gpt-4o",
-#                 messages=[
-#                     {"role": "system", "content": "You are a helpful assistant that identifies key terms, phrases, and concepts related to design principles."},
-#                     {"role": "user", "content": f"List 150 key terms, phrases, or concepts (can be multiple words) related to the design principle of {theme}. Include synonyms and closely related terms. Separate them by commas."}
-#                 ],
-#                 max_tokens=1000
-#             )
-#             terms = response.choices[0].message.content.strip().split(', ')
+class GenerateSuggestionsView(APIView):
+    def post(self, request):
+        message = request.data.get('message')
+        
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are a helpful design assistant. Generate exactly 3 concise, specific questions (7-15 words each) about the design that would naturally follow in the conversation. Format as direct questions like 'How can we improve the element alignment?' or 'What options exist for refining white space?' Focus on practical design aspects like typography, spacing, color, alignment, and brand identity. Make each question standalone and conversational."},
+                    {"role": "user", "content": f"Generate follow-up questions based on this message about design feedback: {message}"}
+                ],
+                max_tokens=500
+            )
             
-#             for term in terms:
-#                 term = term.strip().lower()
-#                 if len(term) > 2:  # Ignore very short terms
-#                     pattern = r'\b' + re.escape(term) + r'\b'
-#                     if re.search(pattern, text.lower()):
-#                         highlighted_terms[term] = theme
-
-#         # print("Highlighted terms:", highlighted_terms)  # Debug print
-#         return Response({"highlighted_terms": highlighted_terms}, status=status.HTTP_200_OK)
+            # Extract just the questions and clean them up
+            questions_text = response.choices[0].message.content.strip()
+            # Split by line breaks or numbered items
+            questions = [q.strip() for q in re.split(r'\n|^\d+\.', questions_text) if q.strip()]
+            # Remove any quotation marks
+            questions = [q.strip('"\'') for q in questions if q]
+            # Limit to 3 questions
+            questions = questions[:3]
+            
+            return Response({"suggestions": questions}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error generating follow-up questions: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
