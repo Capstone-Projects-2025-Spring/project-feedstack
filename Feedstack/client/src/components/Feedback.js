@@ -4,6 +4,8 @@ import axios from 'axios';
 import MarkdownIt from 'markdown-it';
 import popSound from '../assets/pop.mp3';
 import API_URL from '../config';
+import {db} from "../firebase"
+import {serverTimestamp, addDoc, collection} from "firebase/firestore"
 
 const md = new MarkdownIt({
   html: false,  // Disable HTML tags in source
