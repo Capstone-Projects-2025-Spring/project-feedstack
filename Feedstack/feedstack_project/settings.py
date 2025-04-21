@@ -137,5 +137,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://project-feedstack-frontend.onrender.com",
+    "http://localhost:3000",
+]
