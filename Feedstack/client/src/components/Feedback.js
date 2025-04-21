@@ -22,7 +22,39 @@ const themeColors = [
   '#AD1457', '#558B2F', '#311B92', '#E65100', '#004D40'
 ];
 
-const themes = ['Balance', 'Contrast', 'Consistency', 'Alignment & Spacing', 'Accessibility'];
+const themes = [
+  'Balance', 
+  'Contrast', 
+  'Consistency', 
+  'Alignment', 
+  'Proximity', 
+  'Repetition',
+  'Typography', 
+  'Color Theory', 
+  'Hierarchy', 
+  'White Space', 
+  'Accessibility',
+  'Grid Systems', 
+  'Affordance', 
+  'Gestalt Principles', 
+  'Minimalism',
+  'Symmetry', 
+  'Asymmetry', 
+  'Focal Points', 
+  'Unity', 
+  'Rhythm',
+  'Emphasis', 
+  'Proportion', 
+  'Modularity', 
+  'User Flow', 
+  'Visual Weight',
+  'Texture', 
+  'Motion Design', 
+  'Negative Space', 
+  'Composition', 
+  'Pattern'
+];
+
 const colorScale = ['#D3D3D3', '#B0B0B0', '#8C8C8C', '#696969', '#4A4A4A'];
 
 function Feedback() {
@@ -183,6 +215,7 @@ function Feedback() {
       
       const themeResponse = await axios.post(`${API_URL}/identify-theme/`, {
         message: botMessage.content,
+        available_themes: themes // Pass the full list of themes
       });
       
       const newTheme = themeResponse.data.theme;
@@ -583,25 +616,29 @@ function Feedback() {
           <div className="timeline-scrubbar vertical">
             <div className="timeline-track" ref={scrubTrackRef}>
               {/* Create markers for each bookmark/theme point */}
-              {bookmarks.map((bookmark, index) => (
-                <div 
-                  key={index}
-                  className="timeline-marker"
-                  style={{ 
-                    backgroundColor: bookmark.color,
-                    top: `${(bookmark.messageIndex / Math.max(chatMessages.length - 1, 1)) * 100}%` 
-                  }}
-                  onClick={() => navigateToThemeMessage(bookmark.messageIndex, bookmark.id)}
-                >
-                  <div className="timeline-tooltip">
-                    <h4>{chapters.find(chapter => chapter.id === bookmark.id)?.theme || 'Unknown Theme'}</h4>
-                    <p className="tooltip-excerpt">
-                      {chapters.find(chapter => chapter.id === bookmark.id)?.relation?.slice(0, 100) || 
-                        "What strategies can enhance call-to-action button visibility..."}
-                    </p>
+              {bookmarks.map((bookmark, index) => {
+                const chapter = chapters.find(chapter => chapter.id === bookmark.id);
+                const themeName = chapter?.theme || 'Design Principle';
+                const themeDescription = chapter?.relation?.slice(0, 100) || 
+                  "This design principle helps create more effective visual communication...";
+                
+                return (
+                  <div 
+                    key={index}
+                    className="timeline-marker"
+                    style={{ 
+                      backgroundColor: bookmark.color,
+                      top: `${(bookmark.messageIndex / Math.max(chatMessages.length - 1, 1)) * 100}%` 
+                    }}
+                    onClick={() => navigateToThemeMessage(bookmark.messageIndex, bookmark.id)}
+                  >
+                    <div className="timeline-tooltip">
+                      <h4>{themeName}</h4>
+                      <p className="tooltip-excerpt">{themeDescription}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               
               {/* Scrub handle */}
               <div 
@@ -803,7 +840,7 @@ function Feedback() {
                 ))
                 : chapters.map((chapter, idx) => (
                   <li key={idx}>
-                    <button 
+                    <button
                       onClick={() => {
                         // Find corresponding bookmark to get message index
                         const bookmark = bookmarks.find(bm => bm.id === chapter.id);

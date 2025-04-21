@@ -265,20 +265,67 @@ class ChatbotView(APIView):
 class IdentifyThemeView(APIView):
     def post(self, request):
         message = request.data.get('message')
+        available_themes = request.data.get('available_themes', [
+            'Balance', 
+            'Contrast', 
+            'Consistency', 
+            'Alignment', 
+            'Proximity', 
+            'Repetition',
+            'Typography', 
+            'Color Theory', 
+            'Hierarchy', 
+            'White Space', 
+            'Accessibility',
+            'Grid Systems', 
+            'Affordance', 
+            'Gestalt Principles', 
+            'Minimalism',
+            'Symmetry', 
+            'Asymmetry', 
+            'Focal Points', 
+            'Unity', 
+            'Rhythm',
+            'Emphasis', 
+            'Proportion', 
+            'Modularity', 
+            'User Flow', 
+            'Visual Weight',
+            'Texture', 
+            'Motion Design', 
+            'Negative Space', 
+            'Composition', 
+            'Pattern'
+        ])
+        
         print(f"Received message from identify theme: {message}")
+        print(f"Available themes: {available_themes}")
 
         try:
+            # Pass the themes list to the API prompt
+            themes_list = ", ".join(available_themes)
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant that identifies the main theme of a message, for reference use design principles and UX/UI design principles to identify and do so by using a single word. Identify this main theme from the following list: Balance, Consistency, Contrast, Alignment & Spacing, Accessibility"},
-                    {"role": "user", "content": f"Identify the main theme of this message: {message}"}
+                    {"role": "system", "content": f"You are a design expert that identifies the main design principle being discussed in a message. Identify ONE specific design principle from the following list that best matches the content of the message: {themes_list}. Choose the most specific and relevant principle that directly relates to the design concepts being discussed. Respond with ONLY the name of the design principle, exactly as it appears in the list."},
+                    {"role": "user", "content": f"Identify the main design principle in this message about design: {message}"}
                 ],
-                max_tokens=500
+                max_tokens=50,
+                temperature=0.3  # Lower temperature for more deterministic responses
             )
+            
             theme = response.choices[0].message.content.strip()
+            
+            # Ensure the returned theme is in our available_themes list
+            if theme not in available_themes:
+                # Find the closest match if the exact theme isn't in our list
+                closest_match = min(available_themes, key=lambda x: len(set(x.lower()) - set(theme.lower())))
+                theme = closest_match
+                
+            print(f"Identified theme: {theme}")
             return Response({"theme": theme}, status=status.HTTP_200_OK)
         except Exception as e:
+            print(f"Error in theme identification: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class SummarizeView(APIView):
