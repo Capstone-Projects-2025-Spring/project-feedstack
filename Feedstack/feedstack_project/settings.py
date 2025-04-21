@@ -16,6 +16,9 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 from pathlib import Path
+# Add support for Render's PORT environment variable
+import os
+PORT = int(os.environ.get('PORT', 8000))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -141,3 +144,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://project-feedstack-frontend.onrender.com",
     "http://localhost:3000",
 ]
+
+# Add this at the bottom of settings.py
+if not DEBUG:
+    # When in production, media files need to be properly handled
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    
+    # Make sure media URLs work in production
+    from django.conf.urls.static import static
+    urlpatterns = static(MEDIA_URL, document_root=MEDIA_ROOT)
