@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # System Block Diagram
 
-![diagram-4](https://github.com/user-attachments/assets/99371d8f-499a-4299-8664-c37f2b06803d)
+![Feedstack SBD (2)](https://github.com/user-attachments/assets/5acf5ad2-db62-4591-823f-643d7fd596c5)
 Figure 1.1
 # FeedStack Modular Architecture
 
@@ -31,5 +31,5 @@ This document describes the role of each component and their interactions in the
 - **Storage & Database (Firebase)**  
   Stores user-uploaded files, feedback data, and chat history.
 
-- **Version Control & Deployment (GitHub, Grok)**  
+- **Version Control & Deployment (GitHub, Fly.io)**  
   Manages the development process, ensuring stability and continuous updates.
