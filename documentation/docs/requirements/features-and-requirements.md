@@ -41,6 +41,23 @@ sidebar_position: 4
 - Users must be able to navigate between multiple instances of feedback for the same design principle within a chapter.
 - Clicking forward or backward through instances must also scroll the chat to the relevant portion of the conversation.
 
+## 8. CrewAI
+- CrewAI is a lightweight, high-speed Python framework designed to facilitate the creation of autonomous AI agent teams that collaborate to handle complex tasks. Developed independently from other agent frameworks like LangChain, CrewAI offers both high-level simplicity and detailed low-level control, making it suitable for various scenarios.
+- Key components of CrewAI include:
+   - **Crews:** These are top-level organizations that manage AI agent teams, oversee workflows, ensure collaboration, and deliver outcomes.
+   - **AI Agents:** Specialized team members assigned specific roles, equipped with designated tools, capable of delegating tasks, and making autonomous decisions.
+   - **Processes:** Workflow management systems that define collaboration patterns, control task assignments, manage interactions, and ensure efficient execution.​
+   - **Tasks:** Individual assignments with clear objectives, utilizing specific tools, contributing to the larger process, and producing actionable results.
+- CrewAI's design mirrors organizational structures where departments collaborate under leadership to achieve business goals, enabling developers to create AI teams with specialized roles working together to accomplish complex tasks.
+- In addition to having such a favorable design and performance for users, CrewAI is also capable of providing interface features meant to provide a better visualization of how they should present themselves.
+- These interface features consist of:
+   - **Scrub Bar:** A visual progress tracker that lets users quickly navigate through different points within the interaction.
+   - **Smart Suggestions:** Context-aware prompts or follow-up questions generated based on user queries.
+   - **Quick Menu:** A docked menu that lets users quickly jump between related concepts or interface elements.
+      - Lets users navigate feedback topics by design principle or instance frequency.
+      - Offers **Excerpts**, as well as the aforementioned **Definitions** and **Key Terms**.
+      - Guarantees an *Initial Feedback* section.
+   - **Navigation Bar:** Users can tap to expand categories to see related feedback.
 
 # Non-Functional Requirements
 
