@@ -12,7 +12,7 @@ FeedStack is an AI-powered IDE platform designed to provide clear and structured
 
 Using OpenAI's GPT-4o model, FeedStack analyzes key design aspects such as layout, color contrast, typography, etc. The provided feedback is systematically grouped in line with design themes, hence enabling identification of areas of improvement as well as areas that work effectively. The AI chatbot allows users to ask anything related to the web design and it will provide key expert design feedback. In addition, there is a chat assistant that presents follow-up questions and suggestions to help users easily enhance their web design.
 
-User-friendly, FeedStack runs effectively across modern web browsers on different devices such as desktops and mobile devices. The use of Google Sign-In for secure login also increases user convenience without compromising on security.
+User-friendly, FeedStack runs effectively across modern web browsers on different devices such as desktops and mobile devices. Users enter in an indentifying key to gain access to the application.
 
 Overall, FeedStack greatly enhances the process of evaluating web design by providing quick and reliable analyses that lead to improvement in usability, accessibility, and aesthetic appeal. This document outlines system requirements, design structure, and resources required for use as well as development.
 
@@ -35,8 +35,8 @@ FeedStack is built with the following broad system goals in mind:
 - **Cross-Platform Accessibility:**  
   The system must be accessible via web browsers on both desktop and mobile.
 
-- **Secure Authentication via Google Sign-In:**  
-  Authentication should be handled through Google Sign-In for security and ease of access.
+- **Authentication via Participant ID:**  
+  Authentication should be handled through Users entering a key allowing them to launch the app.
 
 - **Scalable Platform Design:**  
   The platform should be designed for scalability, ensuring it can handle an increasing number of users and design uploads.
@@ -54,9 +54,6 @@ FeedStack follows a modular architecture, integrating various components to deli
 
 - **AI Integration (OpenAI GPT-4o API, Word2Vec)**  
   Processes design files, extracts insights, and categorizes feedback into predefined themes.
-
-- **Authentication (Google OAuth 2.0)**  
-  Enables secure user login.
 
 - **Storage & Database (Firebase)**  
   Stores user-uploaded files, feedback data, and chat history.
@@ -77,7 +74,6 @@ To build and run Feedstack, the following resources are required:
 - **Frontend Framework**: React for responsive and dynamic UI, HTML, CSS
 - **Backend & API**: Python, Django REST Framework
 - **Database**: Firebase for data storage
-- **Authentication**: Google OAuth 2.0
 
 ## Background and References
 
