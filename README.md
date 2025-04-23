@@ -54,6 +54,9 @@ Feedstack is a cutting-edge feedback platform that leverages GPT-4 Vision to del
 - **Other Tools**: Python, JavaScript
 
 ---
+## Hosted Site
+https://feedstack.fly.dev/
+
 ## Launch With Docker
 
 Docker Repo Link: https://hub.docker.com/r/jack5000/demo2
@@ -62,7 +65,6 @@ Docker Repo Link: https://hub.docker.com/r/jack5000/demo2
 2. Run the command >docker pull jack5000/demo2:demo2
 3. Once it downloads, run the command >docker run -p 3000:3000 -p 8000:8000 jack5000/demo2:demo2
 4. Navigate to your search engine of choice and enter the url: localhost:3000
-
 
 ## Local Launch Guide to start Feedstack
 
