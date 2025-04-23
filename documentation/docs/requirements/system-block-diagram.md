@@ -25,11 +25,8 @@ This document describes the role of each component and their interactions in the
 - **AI Integration (OpenAI GPT-4o API, Word2Vec)**  
   Processes design files, extracts insights, and categorizes feedback into predefined themes.
 
-- **Authentication (Google OAuth 2.0)**  
-  Enables secure user login.
-
 - **Storage & Database (Firebase)**  
   Stores user-uploaded files, feedback data, and chat history.
 
-- **Version Control & Deployment (GitHub, Grok)**  
+- **Version Control & Deployment (GitHub, Fly, Jenkins)**  
   Manages the development process, ensuring stability and continuous updates.
