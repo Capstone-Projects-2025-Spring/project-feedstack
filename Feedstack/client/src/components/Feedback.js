@@ -4,6 +4,8 @@ import axios from 'axios';
 import MarkdownIt from 'markdown-it';
 import popSound from '../assets/pop.mp3';
 import API_URL from '../config';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
 
 const md = new MarkdownIt({
   html: false,  // Disable HTML tags in source
@@ -39,8 +41,7 @@ function Feedback() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sortMode, setSortMode] = useState('appearance');
   const location = useLocation();
-  const { feedback, participantId, imageUrl, docId } = location.state || 
-    { feedback: 'No feedback available', participantId: 'temp-user', imageUrl: '', docId: 'temp-doc' };
+  const { feedback, participantId, imageUrl, docId } = location.state;
   const chatContainerRef = useRef(null);
   const scrubTrackRef = useRef(null);
   const audioRef = useRef(new Audio(popSound));
