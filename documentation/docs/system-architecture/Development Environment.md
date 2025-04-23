@@ -30,7 +30,3 @@ sidebar_position: 9
     - Sentence Transformers (v 2.2.2)
     - NLTK (v 3.8.1)
     - NumPy (v 1.24.3)
-
-## Hardware
-* General Requirements - [link](https://capstone-projects-2025-spring.github.io/project-feedstack/docs/requirements/general-requirements)
-    - The parts necessary for the operation of this project
