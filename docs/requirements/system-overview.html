@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.3.2">
 <title data-rh="true">System Overview | Project Feedstack</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/requirements/system-overview"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="System Overview | Project Feedstack"><meta data-rh="true" name="description" content="Abstract"><meta data-rh="true" property="og:description" content="Abstract"><link data-rh="true" rel="icon" href="/project-feedstack/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/requirements/system-overview"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/requirements/system-overview" hreflang="en"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2025-Spring.github.io/project-feedstack/docs/requirements/system-overview" hreflang="x-default"><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><link rel="stylesheet" href="/project-feedstack/assets/css/styles.e4cc120d.css">
-<script src="/project-feedstack/assets/js/runtime~main.aaa3183a.js" defer="defer"></script>
+<script src="/project-feedstack/assets/js/runtime~main.4f52f3af.js" defer="defer"></script>
 <script src="/project-feedstack/assets/js/main.1bf6ea97.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -13,7 +13,7 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="abstract">Abstract<a href="#abstract" class="hash-link" aria-label="Direct link to Abstract" title="Direct link to Abstract">​</a></h2>
 <p>FeedStack is an AI-powered IDE platform designed to provide clear and structured feedback on web design files. The platform serves a wide range of users, such as designers, developers, complete beginners, and generally interested users of web design, enabling quick identification of areas in design files in PNG, JPG, or PDF formats that need improvement. In this context, web design files refer to visual representations of website interfaces, these include static mockups, wireframes screenshots, and high-fidelity prototypes that showcase elements of the webpage like layout, color schemes, typography, and overall aesthetic. Typically, these files are exported from design tools (such as Figma, Sketch, or Adobe) in PNG, JPG, or PDF formats.</p>
 <p>Using OpenAI&#x27;s GPT-4o model, FeedStack analyzes key design aspects such as layout, color contrast, typography, etc. The provided feedback is systematically grouped in line with design themes, hence enabling identification of areas of improvement as well as areas that work effectively. The AI chatbot allows users to ask anything related to the web design and it will provide key expert design feedback. In addition, there is a chat assistant that presents follow-up questions and suggestions to help users easily enhance their web design.</p>
-<p>User-friendly, FeedStack runs effectively across modern web browsers on different devices such as desktops and mobile devices. The use of Google Sign-In for secure login also increases user convenience without compromising on security.</p>
+<p>User-friendly, FeedStack runs effectively across modern web browsers on different devices such as desktops and mobile devices. Users enter in an indentifying key to gain access to the application.</p>
 <p>Overall, FeedStack greatly enhances the process of evaluating web design by providing quick and reliable analyses that lead to improvement in usability, accessibility, and aesthetic appeal. This document outlines system requirements, design structure, and resources required for use as well as development.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="high-level-requirement">High-Level Requirement<a href="#high-level-requirement" class="hash-link" aria-label="Direct link to High-Level Requirement" title="Direct link to High-Level Requirement">​</a></h2>
 <p>FeedStack is built with the following broad system goals in mind:</p>
@@ -39,8 +39,8 @@
 <!-- -->The system must be accessible via web browsers on both desktop and mobile.</p>
 </li>
 <li>
-<p><strong>Secure Authentication via Google Sign-In:</strong><br>
-<!-- -->Authentication should be handled through Google Sign-In for security and ease of access.</p>
+<p><strong>Authentication via Participant ID:</strong><br>
+<!-- -->Authentication should be handled through Users entering a key allowing them to launch the app.</p>
 </li>
 <li>
 <p><strong>Scalable Platform Design:</strong><br>
@@ -63,10 +63,6 @@
 <!-- -->Processes design files, extracts insights, and categorizes feedback into predefined themes.</p>
 </li>
 <li>
-<p><strong>Authentication (Google OAuth 2.0)</strong><br>
-<!-- -->Enables secure user login.</p>
-</li>
-<li>
 <p><strong>Storage &amp; Database (Firebase)</strong><br>
 <!-- -->Stores user-uploaded files, feedback data, and chat history.</p>
 </li>
@@ -85,7 +81,6 @@
 <li><strong>Frontend Framework</strong>: React for responsive and dynamic UI, HTML, CSS</li>
 <li><strong>Backend &amp; API</strong>: Python, Django REST Framework</li>
 <li><strong>Database</strong>: Firebase for data storage</li>
-<li><strong>Authentication</strong>: Google OAuth 2.0</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="background-and-references">Background and References<a href="#background-and-references" class="hash-link" aria-label="Direct link to Background and References" title="Direct link to Background and References">​</a></h2>
 <p>FeedStack was conceptualized to address the lack of structured AI feedback in web design analysis. While various design tools provide automated accessibility checks and heuristics-based analysis, few systems leverage AI to provide contextual feedback based on design principles and best practices. FeedStack aims to fill this gap by offering a conversational AI assistant that not only critiques designs but also educates users on why specific design choices matter.</p>
