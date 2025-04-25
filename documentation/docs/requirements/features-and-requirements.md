@@ -51,13 +51,13 @@ sidebar_position: 4
 - CrewAI's design mirrors organizational structures where departments collaborate under leadership to achieve business goals, enabling developers to create AI teams with specialized roles working together to accomplish complex tasks.
 - In addition to having such a favorable design and performance for users, CrewAI is also capable of providing interface features meant to provide a better visualization of how they should present themselves.
 - These interface features consist of:
-   - **Scrub Bar:** A visual progress tracker that lets users quickly navigate through different points within the interaction.
-   - **Smart Suggestions:** Context-aware prompts or follow-up questions generated based on user queries.
-   - **Quick Menu:** A docked menu that lets users quickly jump between related concepts or interface elements.
+## 9.**Scrub Bar:** A visual progress tracker that lets users quickly navigate through different points within the interaction.##
+## 10.**Smart Suggestions:** Context-aware prompts or follow-up questions generated based on user queries.
+## 11.**Quick Menu:** A docked menu that lets users quickly jump between related concepts or interface elements.
       - Lets users navigate feedback topics by design principle or instance frequency.
       - Offers **Excerpts**, as well as the aforementioned **Definitions** and **Key Terms**.
       - Guarantees an *Initial Feedback* section.
-   - **Navigation Bar:** Users can tap to expand categories to see related feedback.
+## 12.**Navigation Bar:** Users can tap to expand categories to see related feedback.
 
 # Non-Functional Requirements
 
