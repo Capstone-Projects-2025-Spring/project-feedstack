@@ -15,7 +15,8 @@ By emphasizing the role of Chapters, Feedstack not only provides feedback but al
 
 ## System Overview and Architecture
 
-![diagram-4](https://github.com/user-attachments/assets/116dca1d-00ea-408b-a9d3-c97da226221e)
+
+![Feedstack SBD (2)](https://github.com/user-attachments/assets/0bb6b171-10f0-4272-b06e-6164133dbfad)
 
 
 Feedstack's architecture is divided into three primary areas:
