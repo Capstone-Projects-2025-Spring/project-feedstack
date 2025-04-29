@@ -58,11 +58,13 @@ FeedStack follows a modular architecture, integrating various components to deli
 - **Storage & Database (Firebase)**  
   Stores user-uploaded files, feedback data, and chat history.
 
-- **Version Control & Deployment (GitHub, Grok)**  
+- **Version Control & Deployment (GitHub, Fly.io)**  
   Manages the development process, ensuring stability and continuous updates.
 
   ![feedstack-design](https://github.com/user-attachments/assets/98175b6a-c5a5-43a1-bde8-88aff5759acd)
-  <img width="1268" alt="410749752-de25c50c-606f-46a4-bff3-4603c70b0bf0" src="https://github.com/user-attachments/assets/98131096-64a0-41bd-8c10-0f7d630ce9e9" />
+
+  <img width="1132" alt="Screenshot 2025-04-28 at 11 07 11 PM" src="https://github.com/user-attachments/assets/bc017657-d4a5-4434-92f5-e4cdc02baf73" />
+
 
 
 
@@ -70,7 +72,7 @@ FeedStack follows a modular architecture, integrating various components to deli
 
 To build and run Feedstack, the following resources are required:
 - **AI Model**: OpenAI’s GPT-4o
-- **Hosting & Cloud Services**: Grok, Vercel, and Netlify
+- **Hosting & Cloud Services**: Fly.io
 - **Frontend Framework**: React for responsive and dynamic UI, HTML, CSS
 - **Backend & API**: Python, Django REST Framework
 - **Database**: Firebase for data storage
