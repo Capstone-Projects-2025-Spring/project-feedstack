@@ -50,14 +50,22 @@ sidebar_position: 4
    - **Tasks:** Individual assignments with clear objectives, utilizing specific tools, contributing to the larger process, and producing actionable results.
 - CrewAI's design mirrors organizational structures where departments collaborate under leadership to achieve business goals, enabling developers to create AI teams with specialized roles working together to accomplish complex tasks.
 - In addition to having such a favorable design and performance for users, CrewAI is also capable of providing interface features meant to provide a better visualization of how they should present themselves.
-- These interface features consist of:
-## 9.**Scrub Bar:** A visual progress tracker that lets users quickly navigate through different points within the interaction.##
-## 10.**Smart Suggestions:** Context-aware prompts or follow-up questions generated based on user queries.
-## 11.**Quick Menu:** A docked menu that lets users quickly jump between related concepts or interface elements.
+
+
+## 9. **Scrub Bar:** 
+A visual progress tracker that lets users quickly navigate through different points within the interaction.
+
+## 10. **Smart Suggestions:** 
+Context-aware prompts or follow-up questions generated based on user queries.
+
+## 11.**Quick Menu:** 
+A docked menu that lets users quickly jump between related concepts or interface elements.
       - Lets users navigate feedback topics by design principle or instance frequency.
       - Offers **Excerpts**, as well as the aforementioned **Definitions** and **Key Terms**.
       - Guarantees an *Initial Feedback* section.
-## 12.**Navigation Bar:** Users can tap to expand categories to see related feedback.
+      
+## 12.**Navigation Bar:** 
+Users can tap to expand categories to see related feedback.
 
 # Non-Functional Requirements
 
@@ -65,17 +73,11 @@ sidebar_position: 4
    The system shall provide AI feedback within 15-20 seconds for at least 90% of operations under typical load.
    Use simple performance testing (manual timing or local scripts) to confirm that 90% of requests return feedback within this time.
 
-3. **Scalability**  
-   - The system should atleast 10 concurrent user sessions without significant effect to performance .  
    
-4. **Availability and Reliability**  
+2. **Availability and Reliability**  
    - During testing and demonstrations, the system should be available at least 95% of the time.  
    - Monitor uptime during demo sessions, using a simple monitoring tool or manual checks to verify that the system remains available 95% of the time.
 
-5. **Security**  
-   - The system shall use Google Sign-In for authentication and encrypt data in transit using TLS.  
-   - Test the authentication process to ensure only authorized users can sign in, and verify TLS encryption using browser developer tools (confirm that connections use TLS 1.2 or higher).
-
-7. **Maintainability and Extensibility**  
+3. **Maintainability and Extensibility**  
    - The codebase should be modular and well-documented, with a minimum of 60% unit test coverage.  
 
