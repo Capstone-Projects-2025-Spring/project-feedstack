@@ -109,20 +109,5 @@ Feedstack integrates external tools to enhance its functionality.
 
 ---
 
-### Use Case: Uploading a Design for Feedback
-![Seq3_Use3_ProjectInCS](https://github.com/user-attachments/assets/d08c8d08-5c36-45b9-8c41-c4ab47f93cba)
-
-- Visualizes how the user can upload their design into Feedstack. In this scenario, the user begins from the login screen and works their way into the file upload destination that's housed in the dashboard. This diagram also shows how the file uploading errors will be handled. 
-
-### Use Case: Navigating Feedback Using Bookmarks
-![Seq4_Use4_ProjectsInCS](https://github.com/user-attachments/assets/4934b33f-ba97-4852-a2b9-0232347b0ea8)
-
-- Shows how a user can navigate to the feedback of their uploaded document. This diagram skips over the login and file upload processes, and begins right after the system returns it's intial feedback. 
-
----
-
-## Simple Class Diagram
-
-![diagram-9](https://github.com/user-attachments/assets/a00cd152-2587-420c-9520-c8450133abc3)
 
 ---
