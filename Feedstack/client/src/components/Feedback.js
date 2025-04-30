@@ -4,6 +4,8 @@ import axios from 'axios';
 import MarkdownIt from 'markdown-it';
 import popSound from '../assets/pop.mp3';
 import API_URL from '../config';
+import {db} from "../firebase"
+import {serverTimestamp, addDoc, collection} from "firebase/firestore"
 
 const md = new MarkdownIt({
   html: false,  // Disable HTML tags in source
@@ -146,8 +148,14 @@ function Feedback() {
     setNewMessage('');
 
     try {
-      // Log to console instead of Firebase
-      console.log('User message (Firebase disabled):', userMessage.content);
+      // Add user message to Firestore
+      const userMessageDoc = {
+        Message: userMessage.content,
+        Timestamp: serverTimestamp(),
+        Sender: "Participant"
+      };
+      await addDoc(collection(db, `Participants/${docId}/ChatLogs`), userMessageDoc);
+      console.log('User message added to Firestore:', userMessageDoc);
 
       // Find the initial feedback about the design to maintain context
       const initialFeedback = chatMessages.length > 0 && !chatMessages[0].is_user 
@@ -176,16 +184,15 @@ function Feedback() {
       
       const botMessage = response.data.bot_message;
       
-      // Log to console instead of Firebase
-      console.log('Bot message (Firebase disabled):', botMessage.content);
-      
+      //Bot Message Check
+      console.log('Bot message:', botMessage.content);
+
       const themeResponse = await axios.post(`${API_URL}/identify-theme/`, {
         message: botMessage.content,
       });
-      
+
       const newTheme = themeResponse.data.theme;
       const newColor = themeColors[chapters.length % themeColors.length];
-      
       const summaryResponse = await axios.post(`${API_URL}/summarize/`, {
         message: botMessage.content,
         theme: newTheme
@@ -194,15 +201,6 @@ function Feedback() {
       const { definition, relation, key_terms, summary } = summaryResponse.data;
       botMessage.keyTerms = summaryResponse.data.key_terms || [];
       setChatMessages(prevMessages => [...prevMessages, botMessage]);
-
-      // Log to console instead of Firebase
-      console.log('Theme (Firebase disabled):', {
-        theme: newTheme, 
-        definition, 
-        relation, 
-        key_terms, 
-        summary
-      });
       
       // Generate a temporary ID for the theme
       const tempThemeId = 'theme-' + Date.now();
@@ -427,10 +425,11 @@ function Feedback() {
   // Improved navigation arrows function
   const handleInstanceNavigation = (theme, direction) => {
     if (!theme) return;
-    
+   
     setChapters(prevChapters => 
       prevChapters.map(item => {
         if (item.theme === theme) {
+
           // Safely get instances array and current index
           const instances = item.instances || [];
           const currentInstance = item.currentInstance || 0;
